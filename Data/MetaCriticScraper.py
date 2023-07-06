@@ -48,6 +48,11 @@ class MetaCriticScraper:
 		# Get publisher and release date. 
 		try:
 			self.game['publisher'] = self.soup.find("li", class_="summary_detail publisher").a.text.strip()
+		except:
+			print("WARNING: Problem getting publisher and release date information")
+			pass
+
+		try:
 			self.game['release_date'] = self.soup.find("li", class_="summary_detail release_data").find("span", class_="data").text.strip()
 			#datetime.strptime(release_date.strip(), "%b %d, %Y")
 		except:
@@ -88,8 +93,26 @@ class MetaCriticScraper:
 			product_info = self.soup.find("div", class_="section product_details").find("div", class_="details side_details")
 			self.game['developer'] = product_info.find("li", class_="summary_detail developer").find("span", class_="data").text.strip()
 			#self.game['genre'] = product_info.find("li", class_="summary_detail product_genre").find("span", class_="data").text.strip()
-			self.game['genre'] = [item.string.strip() for item in list(product_info.find("li", class_="summary_detail product_genre").find_all("span", class_="data"))]
+		except:
+			print("WARNING: Problem getting miscellaneous game information")
+			pass
+
+		try:
+			product_info = self.soup.find("div", class_="section product_details").find("div", class_="details side_details")
+			self.game['genre'] = [item.string.strip() for item in list(product_info.find("li", class_="summary_detail product_genre").find_all("span", class_="data")) if item.string is not None]
+		except:
+			print("WARNING: Problem getting miscellaneous game information")
+			pass
+
+		try:
+			product_info = self.soup.find("div", class_="section product_details").find("div", class_="details side_details")			
 			self.game['rating'] = product_info.find("li", class_="summary_detail product_rating").find("span", class_="data").text.strip()
+		except:
+			print("WARNING: Problem getting miscellaneous game information")
+			pass
+
+		try:
+			product_info = self.soup.find("div", class_="section product_details").find("div", class_="details side_details")
 			self.game['nplayer'] = product_info.find("li", class_ = "summary_detail product_players").find("span", class_="data").text.strip()
 		except:
 			print("WARNING: Problem getting miscellaneous game information")
