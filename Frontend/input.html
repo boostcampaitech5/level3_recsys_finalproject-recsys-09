@@ -5,12 +5,13 @@
         <title> GameP!ck </title>
     </head>
     <body>
-        <form action="/test.html">
-            <h3> 1. 연령대 입력 </h3>
+        <form action="/loading.html">
+            <h2> 사용자 정보를 입력해주세요 </h2>
+            <h3> 1. 연령대 </h3>
             <input type="radio" name="age"> 성인    <input type="radio" name="age"> 미성년자
-            <h3> 1-2. 세부 연령대 입력</h3>   
+            <h3> 1-2. 세부 연령대</h3>   
             <input type="radio" name="young"> 10세 미만   <input type="radio" name="young"> 10-12 <input type="radio" name="young"> 13-16 <input type="radio" name="young"> 17세 이상
-            <h3> 2. 보유하고 있는 게임 기기 입력</h3>
+            <h3> 2. 보유하고 있는 게임 기기 (모두 골라주세요) </h3>
             <input type="checkbox" name="machine"> PC <br>
             <input type="checkbox" name="machine"> 모바일 (ios) <br>
             <input type="checkbox" name="machine"> 닌텐도 스위치 <br>
@@ -19,8 +20,34 @@
             <input type="checkbox" name="machine"> Xbox One <br>
             <input type="checkbox" name="machine"> Xbox Series X<br>
             <br>
-            <input type="submit" value="제출">
-            <input type="image" src="./image/submit_button.png" alt="submit">
+            <br>
+            <h2> 선호하는 게임 스타일을 입력해주세요 </h2>
+            <h3> 1. 플레이 인원 수 </h3>
+            <input type="radio" name="age"> 1명(solo) <input type="radio" name="age"> 2명(duo) <input type="radio" name="age"> 4인 이하 <input type="radio" name="age"> 5인 이상
+            <h3> 2. 선호하는 장르 (모두 골라주세요) </h3>
+            <input type="checkbox" name="genre"> RPG <br>
+            <input type="checkbox" name="genre"> MMORPG <br>
+            <input type="checkbox" name="genre"> FPS <br>
+            <input type="checkbox" name="genre"> MOBA <br>
+            <input type="checkbox" name="genre"> 액션 <br>
+            <input type="checkbox" name="genre"> 전략 <br>
+            <input type="checkbox" name="genre"> 퍼즐 <br>
+            <input type="checkbox" name="genre"> 시뮬레이션 <br>
+            <input type="checkbox" name="genre"> 어드벤처 <br>
+            <input type="checkbox" name="genre"> 스포츠 <br>
+            <h3> 3. 선호하는 게임 태그 (모두 골라주세요) </h3>
+            <input type="checkbox" name="tag"> 작화 / 디자인 <br>
+            <input type="checkbox" name="tag"> 음향 / 사운드 <br>
+            <input type="checkbox" name="tag"> 전투 경험 <br>
+            <input type="checkbox" name="tag"> 높은 난이도 <br>
+            <input type="checkbox" name="tag"> 낮은 난이도 <br>
+            <br>
+            <br>
+            <h2> 만족스럽게 플레이 했던 게임을 입력해주세요 </h2>
+            <input type="text">
+            <br>
+            <br>
+            <input type="image" src="./image/submit_button.png" alt="submit" width="110" height="40">
         </form>
         
 
