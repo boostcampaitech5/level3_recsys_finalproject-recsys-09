@@ -6,12 +6,20 @@
     </head>
     <body>
         <form action="./loading.html" method="post">
+            <script src="./input.js"></script>
             <fieldset>
                 <legend> <h2> 사용자 정보를 입력해주세요</h2> </legend>
                 <h3> 1. 연령대 </h3>
-                <input type="radio" name="age" id="adult"> <label for="adult"> 성인 </label> <input type="radio" name="age" id="underage"> <label for="underage"> 미성년자 </label>
-                <h3> 1-2. 세부 연령대</h3>   
-                <input type="radio" name="young"> 10세 미만   <input type="radio" name="young"> 10-12 <input type="radio" name="young"> 13-16 <input type="radio" name="young"> 17세 이상
+                <input type="radio" name="age" id="20+" onclick="fieldsetDisable()"> <label for="20+"> 성인 </label>
+                <input type="radio" name="age" id="underage" onclick="fieldsetActive()"> <label for="underage"> 미성년자 </label>
+                <fieldset id="young" disabled>
+                    <h3> 1-2. 세부 연령대</h3>   
+                    <input type="radio" name="young" id="10-"> 10세 미만
+                    <input type="radio" name="young" id="10"> 10-12
+                    <input type="radio" name="young" id="13"> 13-16
+                    <input type="radio" name="young" id="17"> 17세 이상
+                </fieldset>
+                
                 <h3> 2. 보유하고 있는 게임 기기 (모두 골라주세요) </h3>
                 <input type="checkbox" name="machine"> PC <br>
                 <input type="checkbox" name="machine"> 모바일 (ios) <br>
