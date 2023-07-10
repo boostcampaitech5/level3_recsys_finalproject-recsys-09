@@ -8,7 +8,7 @@
     </head>
 
     <body>
-        <form action="./loading.html" method="post">
+        <form action="./output.html" method="post" id="inputForm">
             <fieldset>
                 <legend> <h2> 사용자 정보를 입력해주세요</h2> </legend>
                 <h3> 1. 연령대 </h3>
@@ -23,13 +23,13 @@
                 </fieldset>
                 
                 <h3> 2. 보유하고 있는 게임 기기 (모두 골라주세요) </h3>
-                <input type="checkbox" name="machine" value="pc"> PC <br>
-                <input type="checkbox" name="machine" value="ios"> 모바일 (ios) <br>
-                <input type="checkbox" name="machine" value="switch"> 닌텐도 스위치 <br>
-                <input type="checkbox" name="machine" value="ps4"> Play Station 4 <br>
-                <input type="checkbox" name="machine" value="ps5"> Play Station 5 <br>
-                <input type="checkbox" name="machine" value="xboxone"> Xbox One <br>
-                <input type="checkbox" name="machine" value="xboxx"> Xbox Series X<br>
+                <input type="checkbox" name="platform" value="pc"> PC <br>
+                <input type="checkbox" name="platform" value="ios"> 모바일 (ios) <br>
+                <input type="checkbox" name="platform" value="switch"> 닌텐도 스위치 <br>
+                <input type="checkbox" name="platform" value="ps4"> Play Station 4 <br>
+                <input type="checkbox" name="platform" value="ps5"> Play Station 5 <br>
+                <input type="checkbox" name="platform" value="xboxone"> Xbox One <br>
+                <input type="checkbox" name="platform" value="xboxx"> Xbox Series X<br>
             </fieldset>
 
             <br>
@@ -72,6 +72,7 @@
                     placeholder="검색어를 입력해주세요."
                     autocomplete="off"
                     onkeydown="return event.key !== 'Enter';"
+                    value="league of legend"
                 />
                 <!-- 게임 리스트 -->
                 <div class="autocomplete"></div>
@@ -80,10 +81,13 @@
 
             <br>
             <br>
+            <br>
+            <br>
 
-            <input type="image" src="./image/submit_button.png" alt="submit" width="110" height="40">
+            <input type="image" src="./image/submit_button.png" id="submit" alt="submit" width="110" height="40">
         </form>
-        
+        <script src="./submit.js"></script>
+        <script src="./next.js"></script>
 
     </body>
 </html>

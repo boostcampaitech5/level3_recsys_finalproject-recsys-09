@@ -1,5 +1,5 @@
 // 자동 완성 기능 구현
-const dataList = ["hollow knight", "league of legends", "노란색", "검정색"];
+const dataList = ["hollow knight", "league of legends", "battle ground", "starcraft", "teamfight tactics"];
 
 const $search = document.querySelector("#search");
 const $autoComplete = document.querySelector(".autocomplete");
