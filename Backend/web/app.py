@@ -12,15 +12,17 @@ load_dotenv()
 
 app = FastAPI()
 templates = Jinja2Templates(directory="../../Frontend")
-
-
 engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
 
-with engine.connect() as con:
-    statement = text("""select name from game order by name asc""")
-    result = con.execute(statement)
-    
-game_list = [rs[0] for rs in result]
+game_list = []
+
+@app.on_event("startup")
+def load_game_list():
+    with engine.connect() as con:
+        statement = text("""select name from game order by name asc""")
+        result = con.execute(statement)
+        
+    game_list.extend([rs[0] for rs in result])
 
 
 @app.get("/")
@@ -55,25 +57,26 @@ async def output_page(request: Request):
     """
     
     age = "20"
-    machine = ["PC", "PS4"]
+    platform = ["PC", "PS4"]
     players = "1"
-    genre = ["Action", "Adventure"]
-    tag = ["sound", "hard"]
+    genre = ["Tactics", "Puzzle"]
+    tag = ["Graphics", "Completion", "easy"]
     games = ["Zombie Driver: Immortal Edition", "Zumba Fitness Rush"]
     
     
     # content based model input
     cb_input = {
         "age": int(age),
-        "platform": machine,
+        "platform": platform,
         "players": int(players),
+        "tag": tag,
         "games": games
     }
     
     # gpt input
     gpt_input = {
         "age": int(age),
-        "platform": machine,
+        "platform": platform,
         "players": int(players),
         "games": games
     }
@@ -123,7 +126,7 @@ async def output_page(request: Request):
         "urls": url_list
     }
     
-    return templates.TemplateResponse("test.html", {"request": request, "game": RecommendedGame(**output)})
+    return templates.TemplateResponse("output.html", {"request": request, "game": RecommendedGame(**output)})
 
 
 if __name__ == '__main__':
