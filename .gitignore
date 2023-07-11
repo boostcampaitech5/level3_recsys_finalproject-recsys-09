@@ -1,0 +1,10 @@
+# 프로젝트 전체 폴더 중 TODO라는 폴더명을 사용하는 data 폴더의 하위 파일은 모두 무시
+# (즉, t.txt 파일과 tt.txt 파일 모두 무시됨)
+data/
+__pycache__
+.env
+Dockerfile
+
+# 모든 확장자 .csv 파일을 무시
+*.csv
+*.ipynb_checkpoints
