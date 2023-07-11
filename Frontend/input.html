@@ -12,11 +12,11 @@
             <fieldset>
                 <legend> <h2> 사용자 정보를 입력해주세요</h2> </legend>
                 <h3> 1. 연령대 </h3>
-                <input type="radio" name="age" id="20+" value="20+" onclick="fieldsetDisable()"> <label for="20+"> 성인 </label>
-                <input type="radio" name="age" id="underage" value="underage" onclick="fieldsetActive()"> <label for="underage"> 미성년자 </label>
+                <input type="radio" name="age" id="20+" value="20" onclick="fieldsetDisable()"> <label for="20+"> 성인 </label>
+                <input type="radio" name="age" id="underage" value="0" onclick="fieldsetActive()"> <label for="underage"> 미성년자 </label>
                 <fieldset id="young" disabled>
                     <h3> 1-2. 세부 연령대</h3>   
-                    <input type="radio" name="young" id="10-" value="10-"> 10세 미만
+                    <input type="radio" name="young" id="10-" value="9"> 10세 미만
                     <input type="radio" name="young" id="10" value="10"> 10-12
                     <input type="radio" name="young" id="13" value="13"> 13-16
                     <input type="radio" name="young" id="17" value="17"> 17세 이상
@@ -37,45 +37,51 @@
             <fieldset> 
                 <legend> <h2> 선호하는 게임 스타일을 입력해주세요 </h2> </legend>
                 <h3> 1. 플레이 인원 수 </h3>
-                <input type="radio" name="players" value="solo"> 1명(solo)
-                <input type="radio" name="players" value="duo"> 2명(duo)
-                <input type="radio" name="players" value="four"> 4인 이하
-                <input type="radio" name="players" value="five"> 5인 이상
+                <input type="radio" name="players" value="1"> 1명(solo)
+                <input type="radio" name="players" value="2"> 2명(duo)
+                <input type="radio" name="players" value="4"> 4인 이하
+                <input type="radio" name="players" value="5"> 5인 이상
 
                 <h3> 2. 선호하는 장르 (모두 골라주세요) </h3>
                 <input type="checkbox" name="genre" value="RPG"> RPG <br>
-                <input type="checkbox" name="genre" value="MMORPG"> MMORPG <br>
-                <input type="checkbox" name="genre" value="FPS"> FPS <br>
-                <input type="checkbox" name="genre" value="MOBA"> MOBA <br>
-                <input type="checkbox" name="genre" value="action"> 액션 <br>
-                <input type="checkbox" name="genre" value="strategy"> 전략 <br>
-                <input type="checkbox" name="genre" value="puzzle"> 퍼즐 <br>
-                <input type="checkbox" name="genre" value="simulation"> 시뮬레이션 <br>
-                <input type="checkbox" name="genre" value="adventure"> 어드벤처 <br>
-                <input type="checkbox" name="genre" value="sports"> 스포츠 <br>
+                <input type="checkbox" name="genre" value="Shooting"> FPS / Shooting <br>
+                <input type="checkbox" name="genre" value="AOS"> AOS / MOBA <br>
+                <input type="checkbox" name="genre" value="Action"> 액션 <br>
+                <input type="checkbox" name="genre" value="Tactics"> 전략 <br>
+                <input type="checkbox" name="genre" value="Puzzle"> 퍼즐 <br>
+                <input type="checkbox" name="genre" value="Simulation"> 시뮬레이션 <br>
+                <input type="checkbox" name="genre" value="Adventure"> 어드벤처 <br>
+                <input type="checkbox" name="genre" value="Sports"> 스포츠 <br>
+                <input type="checkbox" name="genre" value="Arcade"> 아케이드 <br>
+                <input type="checkbox" name="genre" value="Racing"> 레이싱 <br>
 
                 <h3> 3. 선호하는 게임 태그 (모두 골라주세요) </h3>
-                <input type="checkbox" name="tag"> 작화 / 디자인 <br>
-                <input type="checkbox" name="tag"> 음향 / 사운드 <br>
-                <input type="checkbox" name="tag"> 전투 경험 <br>
-                <input type="checkbox" name="tag"> 높은 난이도 <br>
-                <input type="checkbox" name="tag"> 낮은 난이도 <br>
+                <input type="checkbox" name="tag" value="Graphics"> 작화 / 디자인 <br>
+                <input type="checkbox" name="tag" value="Sound"> 음향 / 사운드 <br>
+                <input type="checkbox" name="tag" value="Creativity"> 독창성 <br>
+                <input type="checkbox" name="tag" value="Freedom"> 자유도 <br>
+                <input type="checkbox" name="tag" value="Hitting"> 타격감 <br>
+                <input type="checkbox" name="tag" value="Completion"> 완성도 <br>
+                <input type="checkbox" name="tag" value="hard"> 높은 난이도 <br>
+                <input type="checkbox" name="tag" value="easy"> 낮은 난이도 <br>
             </fieldset>
             
             <section>
                 <h2> 만족스럽게 플레이 했던 게임을 입력해주세요 </h2>
                 <p>(게임이름은 영어로 입력되어야 합니다)</p>
-                <!--검색어 입력 폼-->
-                <input
-                    type="text"
-                    id="search"
-                    placeholder="검색어를 입력해주세요."
-                    autocomplete="off"
-                    onkeydown="return event.key !== 'Enter';"
-                    value="league of legend"
-                />
-                <!-- 게임 리스트 -->
-                <div class="autocomplete"></div>
+                <div id="box">
+                    <!--검색어 입력 폼-->
+                    <input
+                        type="text"
+                        id="search"
+                        placeholder="검색어를 입력해주세요."
+                        autocomplete="off"
+                        onkeydown="return event.key !== 'Enter';"
+                    />
+
+                    <!--게임 리스트-->
+                    <div class="autocomplete"></div>
+                </div>
             </section>
             <script src="./search.js"></script>
 
@@ -84,7 +90,7 @@
             <br>
             <br>
 
-            <input type="image" src="./image/submit_button.png" id="submit" alt="submit" width="110" height="40">
+            <input type="image" src="./image/submit_button.png" id="submit" alt="submit" width="110" height="40" disabled>
         </form>
         <script src="./submit.js"></script>
         <script src="./next.js"></script>
