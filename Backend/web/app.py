@@ -1,11 +1,26 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
+from fastapi import Request
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
 from data_class import RecommendedGame
 import uvicorn
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 app = FastAPI()
 templates = Jinja2Templates(directory="../../Frontend")
+
+
+engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
+
+with engine.connect() as con:
+    statement = text("""select name from game order by name asc""")
+    result = con.execute(statement)
+    
+game_list = [rs[0] for rs in result]
 
 
 @app.get("/")
@@ -23,9 +38,7 @@ def input_page(request: Request):
         
         html로 선택할 수 있는 게임 리스트를 전달한다. (DB)
     """
-        
-    game_list = ["Zombie Driver: Immortal Edition", "Zumba Fitness Rush"]
-
+    
     return templates.TemplateResponse("input.html", {"request": request, "game_list": game_list})
 
 
@@ -39,8 +52,8 @@ async def output_page(request: Request):#, user: UserInfo):
     2. 모델 서버로부터 받은 output과 db를 이용해 사용자에게 제공할 game list 생성 (DB)
     3. html로 추천 game list를 전달한다.
     4. 모델 서버로 보낸 input과 모델 서버로부터 받은 output을 logging한다. (선택)
-    
     """
+    
     age = "20"
     machine = ["PC", "PS4"]
     players = "1"
@@ -72,7 +85,9 @@ async def output_page(request: Request):#, user: UserInfo):
         "games": game_list,
         "urls": url_list
     }
+    
     return templates.TemplateResponse("test.html", {"request": request, "game": RecommendedGame(**output)})
+
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)
