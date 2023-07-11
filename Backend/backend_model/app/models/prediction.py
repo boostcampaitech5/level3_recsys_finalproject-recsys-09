@@ -30,3 +30,33 @@ class MachineLearningDataInput(BaseModel):
                 ]
             ]
         )
+
+
+class RecommendedGame(BaseModel):
+    games: list
+
+
+class ModelInput(BaseModel):
+    age: str
+    platform: list
+    players: str
+    games: list
+
+    def get_games(self):
+        return self.games
+
+
+class GPTInput(BaseModel):
+    age: str
+    platform: list
+    players: str
+    games: list
+
+    def get_user_data(self):
+        userdata = {
+            "age": self.age,
+            "platform": self.platform,
+            "players": self.players,
+            "games": self.games
+        }
+        return str(userdata)
