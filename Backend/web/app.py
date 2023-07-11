@@ -43,7 +43,7 @@ def input_page(request: Request):
 
 
 @app.post("/output")
-async def output_page(request: Request):#, user: UserInfo):
+async def output_page(request: Request):
     """
     user에게 받은 input을 model의 input으로 넘겨주고 추천 game을 받아 output page를 return한다.
     
@@ -78,9 +78,46 @@ async def output_page(request: Request):#, user: UserInfo):
         "games": games
     }
     
-    game_list = ["Zombie Driver: Immortal Edition", "Zumba Fitness Rush"]
-    url_list = ["url1", "url2"]
+    # model server로 request 보내기
     
+    
+    # model server response 처리
+    cb_model = {
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5
+    }
+    
+    gpt_model = {
+        "1": "Zombie Driver: Immortal Edition", 
+        "2": "Zumba Fitness Rush",
+        "3": "Unepic",
+        "4": "Valfaris",
+        "5": "TrackMania DS"
+    }
+    
+    game_list = []
+    url_list = []
+    
+    with engine.connect() as con:
+        for _, title in gpt_model.items():
+            statement = text(f"select name, img_url from game where name='{title}'")
+            gpt_result = con.execute(statement)
+            
+            for rs in gpt_result:
+                game_list.append(rs[0])
+                url_list.append(rs[1])   
+                
+        for _, id in cb_model.items():
+            statement = text(f"select name, img_url from game where id={id}")
+            cb_result = con.execute(statement)
+            
+            for rs in cb_result:
+                game_list.append(rs[0])
+                url_list.append(rs[1])
+
     output = {
         "games": game_list,
         "urls": url_list
