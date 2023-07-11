@@ -4,7 +4,7 @@ const platformInput = document.getElementsByName('platform')
 const playerInput = document.getElementsByName('players')
 const genreInput = document.getElementsByName('genre')
 const tagInput = document.getElementsByName('tag')
-const gameInput = document.getElementById('search')
+const gameInput = document.getElementsByName('search')
 const submit = document.getElementById('submit')
 
 let validate = {
@@ -22,7 +22,7 @@ platformInput.forEach(platform => platform.addEventListener('input', checkFormVa
 playerInput.forEach(player => player.addEventListener('input', checkFormValidity));
 genreInput.forEach(genre => genre.addEventListener('input', checkFormValidity));
 tagInput.forEach(tag => tag.addEventListener('input', checkFormValidity));
-gameInput.addEventListener('input', checkFormValidity)
+gameInput.forEach(game => game.addEventListener('input', checkFormValidity));
 
 function checkFormValidity() {
   checkElement();
@@ -79,9 +79,13 @@ function checkElement(){
     }
   })
 
-  if (gameInput.value) {
-    gameValue = true
-  }
+  gameInput.forEach(function(game){
+    if (gameInput.value) {
+      gameValue = true
+    }
+  })
+
+
 
   validate["platformInput"] = platformValue
   validate["playerInput"] = playerValue

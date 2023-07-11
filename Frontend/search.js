@@ -1,49 +1,57 @@
 // 자동 완성 기능 구현
 const dataList = ["hollow knight", "league of legends", "battle ground", "starcraft", "teamfight tactics"];
-
-const $search = document.querySelector("#search");
 const $autoComplete = document.querySelector(".autocomplete");
 
-let nowIndex = 0;
+var $search = document.getElementsByName("search");
+//const $search = document.querySelectorAll("input[name=search]");
 
-$search.onkeyup = (event) => {
-  // 검색어
-  const value = $search.value.trim().toLowerCase();
+$search.forEach(search => search.addEventListener('input', makeAutocomplete));
 
-  // 자동완성 필터링
-  const matchDataList = value
-    ? dataList.filter((label) => label.includes(value))
-    : [];
+function makeAutocomplete() {
+  $search.forEach(function(search){
+    let nowIndex = 0;
+  
+    search.onkeyup = (event) => {
+      // 검색어
+      const value = search.value.trim().toLowerCase();
+      // 자동완성 필터링
+      const matchDataList = value
+        ? dataList.filter((label) => label.includes(value))
+        : [];
+  
+      switch (event.keyCode) {
+        // UP KEY
+        case 38:
+          nowIndex = Math.max(nowIndex - 1, 0);
+          break;
+  
+        // DOWN KEY
+        case 40:
+          nowIndex = Math.min(nowIndex + 1, matchDataList.length - 1);
+          break;
+  
+        // ENTER KEY
+        case 13:
+          search.value = matchDataList[nowIndex] || "";
+  
+          // 초기화
+          nowIndex = 0;
+          matchDataList.length = 0;
+          break;
+          
+        // 그외 다시 초기화
+        default:
+          nowIndex = 0;
+          break;
+      }
+  
+      // 리스트 보여주기
+      showList(matchDataList, value, nowIndex);
+    };
+  })
+}
 
-  switch (event.keyCode) {
-    // UP KEY
-    case 38:
-      nowIndex = Math.max(nowIndex - 1, 0);
-      break;
 
-    // DOWN KEY
-    case 40:
-      nowIndex = Math.min(nowIndex + 1, matchDataList.length - 1);
-      break;
-
-    // ENTER KEY
-    case 13:
-      document.querySelector("#search").value = matchDataList[nowIndex] || "";
-
-      // 초기화
-      nowIndex = 0;
-      matchDataList.length = 0;
-      break;
-      
-    // 그외 다시 초기화
-    default:
-      nowIndex = 0;
-      break;
-  }
-
-  // 리스트 보여주기
-  showList(matchDataList, value, nowIndex);
-};
 
 const showList = (data, value, nowIndex) => {
   // 정규식으로 변환

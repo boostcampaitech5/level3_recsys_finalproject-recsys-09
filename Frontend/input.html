@@ -4,6 +4,25 @@
         <meta charset="utf-8">
         <title> GameP!ck </title>
         <script src="./input.js"></script>
+        <script>
+            const add_textbox = () => {
+                const box = document.getElementById("box");
+                const newP = document.createElement('p');
+
+                if (document.getElementsByName("search").length >=10) {
+                    alert("입력 가능한 게임 항목은 최대 10개입니다.");
+                    return;
+                }
+                newP.innerHTML = "<input type='text' name='search' placeholder='검색어를 입력해주세요.' autocomplete='off' onkeydown='return event.key !== `Enter`;'> <input type='button' value='삭제' onclick='remove(this)'>";
+                box.appendChild(newP);
+
+                $search.forEach(search => search.addEventListener('input', makeAutocomplete));
+            }
+
+            const remove = (obj) => {
+                document.getElementById('box').removeChild(obj.parentNode);
+            }
+        </script>
         <link rel="stylesheet" href="./input.css">
     </head>
 
@@ -67,21 +86,20 @@
             </fieldset>
             
             <section>
-                <h2> 만족스럽게 플레이 했던 게임을 입력해주세요 </h2>
-                <p>(게임이름은 영어로 입력되어야 합니다)</p>
+                <h2> 만족스럽게 플레이 했던 게임을 입력해주세요 (최대10개) </h2>
+                <p>(게임이름은 영어로 입력되어야 합니다. 위,아래 방향키, 엔터키로 입력해주세요)</p>
                 <div id="box">
                     <!--검색어 입력 폼-->
                     <input
                         type="text"
-                        id="search"
+                        name="search"
                         placeholder="검색어를 입력해주세요."
                         autocomplete="off"
                         onkeydown="return event.key !== 'Enter';"
-                    />
+                    />  <input type="button" value="추가" onclick="add_textbox()">
 
-                    <!--게임 리스트-->
-                    <div class="autocomplete"></div>
                 </div>
+                <div class="autocomplete"></div>
             </section>
             <script src="./search.js"></script>
 
