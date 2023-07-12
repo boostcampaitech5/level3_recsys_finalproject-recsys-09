@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <meta charset="utf-8">
+        <title> GameP!ck </title>
+        <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.png">
     </head>
     <body>
-        
+        <p>
+            {% for g in game['games'] %}
+                <li>{{g}}</li>
+            {% endfor %}
+        </p>
+
+        <form action="./main.html">
+            <input type="image" src="./image/home_button.png" id="home" alt="submit" width="110" height="40">
+        </form>
     </body>
 </html>
