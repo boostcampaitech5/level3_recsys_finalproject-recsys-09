@@ -35,6 +35,7 @@ async def gpt_recommend(data_input: GPTInput):
     try:
         user_data = data_input.get_user_data()
         recommendations = get_recommendations(user_data)
+        print(recommendations)
         recommendations = make_list(recommendations)
 
     except Exception as err:
