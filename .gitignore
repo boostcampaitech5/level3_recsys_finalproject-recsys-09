@@ -1,6 +1,3 @@
-# frontend에서 사용되는 image 폴더 무시
-image/
-
 # 프로젝트 전체 폴더 중 TODO라는 폴더명을 사용하는 data 폴더의 하위 파일은 모두 무시
 # (즉, t.txt 파일과 tt.txt 파일 모두 무시됨)
 data/
