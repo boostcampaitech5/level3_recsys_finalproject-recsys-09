@@ -7,9 +7,28 @@
     </head>
     <body>
         <p>
-            {% for g in game['games'] %}
-                <li>{{g}}</li>
-            {% endfor %}
+            <img src="{{game['urls'][0]}}" alt="game1"> <br>
+            <h3>{{game['games'][0]}}</h3>
+        </p>
+
+        <p>
+            <img src="{{game['urls'][1]}}" alt="game1"> <br>
+            <h3>{{game['games'][1]}}</h3>
+        </p>
+
+        <p>
+            <img src="{{game['urls'][2]}}" alt="game1"> <br>
+            <h3>{{game['games'][2]}}</h3>
+        </p>
+
+        <p>
+            <img src="{{game['urls'][3]}}" alt="game1"> <br>
+            <h3>{{game['games'][3]}}</h3>
+        </p>
+
+        <p>
+            <img src="{{game['urls'][4]}}" alt="game1"> <br>
+            <h3>{{game['games'][4]}}</h3>
         </p>
 
         <form action="./main.html">
