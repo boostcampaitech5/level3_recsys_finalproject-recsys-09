@@ -80,7 +80,7 @@ function checkElement(){
   })
 
   gameInput.forEach(function(game){
-    if (gameInput.value) {
+    if (game.value) {
       gameValue = true
     }
   })
