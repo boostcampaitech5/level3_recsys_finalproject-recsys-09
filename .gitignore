@@ -6,3 +6,6 @@ __pycache__
 # 모든 확장자 .csv 파일을 무시
 *.csv
 *.ipynb_checkpoints
+*.env
+Dockerfile
+
