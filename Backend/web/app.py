@@ -31,7 +31,7 @@ def home_page(request: Request):
     """
         시작 화면을 return한다.
     """
-    return templates.TemplateResponse("main.html", {"request": request})
+    return templates.TemplateResponse("main.html", {"request": request, "ip": os.environ['HOST'], "port": os.environ['PORT']})
 
 
 @app.get("/input")
@@ -42,7 +42,7 @@ def input_page(request: Request):
         html로 선택할 수 있는 게임 리스트를 전달한다. (DB)
     """
     
-    return templates.TemplateResponse("input.html", {"request": request, "game_list": game_list})
+    return templates.TemplateResponse("input.html", {"request": request, "game_list": game_list, "ip": os.environ['HOST'], "port": os.environ['PORT']})
 
 
 @app.post("/output")
@@ -91,7 +91,7 @@ async def output_page(request: Request):
     #model server로 request 보내기
     cb_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/cb_model/predict", json=cb_input)
     gpt_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/gpt/predict", json=gpt_input)
-
+    
     cb_model= cb_response.json()['games']
     gpt = gpt_response.json()['games']
     
@@ -128,7 +128,7 @@ async def output_page(request: Request):
         "urls": url_list
     }
     
-    return templates.TemplateResponse("output.html", {"request": request, "game": RecommendedGame(**output)})
+    return templates.TemplateResponse("output.html", {"request": request, "game": RecommendedGame(**output), "ip": os.environ['HOST'], "port": os.environ['PORT']})
 
 
 if __name__ == '__main__':
