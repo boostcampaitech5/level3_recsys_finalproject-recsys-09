@@ -1,17 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 from data_class import RecommendedGame
 import uvicorn
 from dotenv import load_dotenv
 import os
+import requests
 
 load_dotenv()
 
 app = FastAPI()
-templates = Jinja2Templates(directory="../../Frontend")
+app.mount("/static", StaticFiles(directory="./Frontend"), name="static")
+templates = Jinja2Templates(directory="./Frontend")
 engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
 
 game_list = []
@@ -22,7 +24,7 @@ def load_game_list():
         statement = text("""select name from game order by name asc""")
         result = con.execute(statement)
         
-    game_list.extend([rs[0] for rs in result])
+    game_list.extend([rs[0].lower() for rs in result])
 
 
 @app.get("/")
@@ -60,67 +62,60 @@ async def output_page(request: Request):
     platform = ["PC", "PS4"]
     players = "1"
     genre = ["Tactics", "Puzzle"]
-    tag = ["Graphics", "Completion", "easy"]
+    tag = ["Graphics", "Completion", "easy"] # 긍정 0, 부정 1, 쉬움 1, 어려움 2
     games = ["Zombie Driver: Immortal Edition", "Zumba Fitness Rush"]
     
     
     # content based model input
     cb_input = {
-        "age": int(age),
+        "age": age,
         "platform": platform,
-        "players": int(players),
+        "players": players,
+        "major_genre": genre,
         "tag": tag,
         "games": games
     }
     
     # gpt input
     gpt_input = {
-        "age": int(age),
+        "age": age,
         "platform": platform,
-        "players": int(players),
+        "players": players,
         "games": games
     }
-    
-    # model server로 request 보내기
-    
+
+    #model server로 request 보내기
+    cb_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/cb_model/predict", json=cb_input)
+    gpt_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/gpt/predict", json=gpt_input)
+
+    cb_model= cb_response.json()['games']
+    gpt = gpt_response.json()['games']
     
     # model server response 처리
-    cb_model = {
-        "1": 1,
-        "2": 2,
-        "3": 3,
-        "4": 4,
-        "5": 5
-    }
-    
-    gpt_model = {
-        "1": "Zombie Driver: Immortal Edition", 
-        "2": "Zumba Fitness Rush",
-        "3": "Unepic",
-        "4": "Valfaris",
-        "5": "TrackMania DS"
-    }
-    
     game_list = []
     url_list = []
     
     with engine.connect() as con:
-        for _, title in gpt_model.items():
+        for title in gpt:
             statement = text(f"select name, img_url from game where name='{title}'")
             gpt_result = con.execute(statement)
             
             for rs in gpt_result:
+                if len(game_list) == 4:
+                    break
                 game_list.append(rs[0])
-                url_list.append(rs[1])   
-                
-        for _, id in cb_model.items():
+                url_list.append(rs[1])
+        
+        for id in cb_model:
             statement = text(f"select name, img_url from game where id={id}")
             cb_result = con.execute(statement)
             
             for rs in cb_result:
+                if len(game_list) == 5:
+                    break
                 game_list.append(rs[0])
                 url_list.append(rs[1])
-
+    
     output = {
         "games": game_list,
         "urls": url_list
