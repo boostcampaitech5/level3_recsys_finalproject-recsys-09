@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text
+from sqlalchemy import create_engine, bindparam, text
 from data_class import RecommendedGame
 import uvicorn
 from dotenv import load_dotenv
@@ -58,12 +57,17 @@ async def output_page(request: Request):
     4. 모델 서버로 보낸 input과 모델 서버로부터 받은 output을 logging한다. (선택)
     """
     
-    age = "20"
-    platform = ["PC", "PS4"]
-    players = "1"
-    genre = ["Tactics", "Puzzle"]
-    tag = ["Graphics", "Completion", "easy"] # 긍정 0, 부정 1, 쉬움 1, 어려움 2
-    games = ["Zombie Driver: Immortal Edition", "Zumba Fitness Rush"]
+    form_data = await request.form()
+    
+    age = form_data.get("age")
+    if int(age) == 0:
+        young = form_data.get("young")
+        age = young
+    platform = form_data.getlist("platform")
+    players = form_data.get("players")
+    genre = form_data.getlist("genre")
+    tag = form_data.getlist("tag") # 긍정 0, 부정 1, 쉬움 1, 어려움 2
+    games = form_data.getlist("search")
     
     
     # content based model input
