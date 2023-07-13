@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title> GameP!ck </title>
         <script src="{{ url_for('static', path='/input.js')}}"></script>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
         <script>
             const add_textbox = () => {
                 const box = document.getElementById("box");
@@ -42,13 +43,13 @@
                 </fieldset>
                 
                 <h3> 2. 보유하고 있는 게임 기기 (모두 골라주세요) </h3>
-                <input type="checkbox" name="platform" value="pc"> PC <br>
-                <input type="checkbox" name="platform" value="ios"> 모바일 (ios) <br>
-                <input type="checkbox" name="platform" value="switch"> 닌텐도 스위치 <br>
-                <input type="checkbox" name="platform" value="ps4"> Play Station 4 <br>
-                <input type="checkbox" name="platform" value="ps5"> Play Station 5 <br>
-                <input type="checkbox" name="platform" value="xboxone"> Xbox One <br>
-                <input type="checkbox" name="platform" value="xboxx"> Xbox Series X<br>
+                <input type="checkbox" name="platform" value="PC"> PC <br>
+                <input type="checkbox" name="platform" value="iOS"> iOS (iPhone/iPad) <br>
+                <input type="checkbox" name="platform" value="Switch"> 닌텐도 스위치 <br>
+                <input type="checkbox" name="platform" value="PlayStation 4"> Play Station 4 <br>
+                <input type="checkbox" name="platform" value="PlayStation 5"> Play Station 5 <br>
+                <input type="checkbox" name="platform" value="Xbox One"> Xbox One <br>
+                <input type="checkbox" name="platform" value="Xbox Series X"> Xbox Series X<br>
             </fieldset>
 
             <br>
