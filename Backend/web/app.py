@@ -72,20 +72,20 @@ async def output_page(request: Request):
     
     # content based model input
     cb_input = {
-        "age": age,
-        "platform": platform,
-        "players": players,
-        "major_genre": genre,
-        "tag": tag,
-        "games": games
+        'age': age,
+        'platform': platform,
+        'players': players,
+        'major_genre': genre,
+        'tag': tag,
+        'games': games
     }
     
     # gpt input
     gpt_input = {
-        "age": age,
-        "platform": platform,
-        "players": players,
-        "games": games
+        'age': age,
+        'platform': platform,
+        'players': players,
+        'games': games
     }
 
     #model server로 request 보내기
@@ -101,7 +101,10 @@ async def output_page(request: Request):
     
     with engine.connect() as con:
         for title in gpt:
-            statement = text(f"select name, img_url from game where name='{title}'")
+            title_param = bindparam("title", title)
+            
+            statement = text("select name, img_url from game where name=:title")
+            statement = statement.bindparams(title_param)
             gpt_result = con.execute(statement)
             
             for rs in gpt_result:
