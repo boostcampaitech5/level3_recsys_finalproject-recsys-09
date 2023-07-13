@@ -20,8 +20,8 @@ def players_filter(df, players):
 
 def platform_and_genre_filter(df_, platform, major_genre):
     df = df_.copy()
-    df['split_genres'] = df['major_genre'].apply(lambda genres: genres.split(','))
-    df['split_platform'] = df['platform'].apply(lambda genres: genres.split(','))
+    df['split_genres'] = df['major_genre'].fillna('NaN').apply(lambda genres: genres.split(','))
+    df['split_platform'] = df['platform'].fillna('NaN').apply(lambda platform: platform.split(','))
 
     idx_arr = []
     for genre, platforms, idx in zip(df['split_genres'],df['split_platform'], df['id']):
@@ -57,4 +57,4 @@ def filter (df, age, platform, players, major_genre):
     output = players_filter(output, players)
     output = age_filter(output, age)
 
-    return output
+    return output['id']
