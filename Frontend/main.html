@@ -6,9 +6,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.png">
     </head>
     <body>
-        <img src="./image/logo.png" alt="logo">
-        <form action="./input.html">
-            <input type="image" src="./image/start_button.png" alt="start" width="110" height="40">
-        </form>
+        <img src="{{ url_for('static', path='./image/logo.png')}}" alt="logo">
+        <input type="image" src="{{ url_for('static', path='./image/start_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/input';" alt="start" width="110" height="40">
     </body>
 </html>

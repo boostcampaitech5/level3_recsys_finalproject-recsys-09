@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title> GameP!ck </title>
-        <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.png">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
     </head>
     <body>
         <p>
@@ -31,8 +31,6 @@
             <h3>{{game['games'][4]}}</h3>
         </p>
 
-        <form action="./main.html">
-            <input type="image" src="./image/home_button.png" id="home" alt="submit" width="110" height="40">
-        </form>
+        <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/';" alt="start" width="110" height="40">
     </body>
 </html>
