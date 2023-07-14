@@ -64,11 +64,13 @@ class ContentBaseModel():
         self.filtering_data()
     
     def tag_preprocessing(self, tags):
-        tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'hard']
+        tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy']
         user_tag = []
         for i in tag_list:
             if i in tags:
                 user_tag.append(1)
+            elif i =="hard":
+                user_tag.append(2)
             else:
                 user_tag.append(0)
         return user_tag
