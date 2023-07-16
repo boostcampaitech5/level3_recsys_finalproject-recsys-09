@@ -5,6 +5,14 @@ from loguru import logger
 from core.errors import PredictException, ModelLoadException
 from core.config import MODEL_NAME, MODEL_PATH, POSTGRE, API_KEY
 
+# model
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+# data
+from sqlalchemy import create_engine
+import pandas as pd
+from services.filters import filter
+
 import openai
 
 
@@ -42,61 +50,76 @@ class MachineLearningModelHandlerScore(object):
             raise ModelLoadException(message)
         return model
 
-# model
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-# data
-from sqlalchemy import create_engine
-import pandas as pd
-
 class ContentBaseModel():
-    def __init__(self, user_games_names):
-        self.user_games_names = list(user_games_names)
+    def __init__(self, user_data):
+        self.user_games_names = user_data.games
+        self.age = int(user_data.age)
+        self.platform = user_data.platform
+        self.players = int(user_data.players)
+        self.major_genre = user_data.major_genre
+        self.tag = self.tag_preprocessing(user_data.tag)
+
         self.load_game_data()
         self.preprocess_input()
+        self.filtering_data()
+    
+    def tag_preprocessing(self, tags):
+        tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy']
+        user_tag = []
+        for i in tag_list:
+            if i in tags:
+                user_tag.append(1)
+            elif i =="hard":
+                user_tag.append(2)
+            else:
+                user_tag.append(0)
+        return user_tag
 
     def load_game_data(self):
         engine = create_engine(POSTGRE)
-        game_table = "game"
-        self.game_table = pd.read_sql_table(table_name=game_table, con=engine)
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
 
     def preprocess_input(self):
         print("-----------------------------------------------------------------------------")
-        self.user_df = pd.DataFrame(columns=['id', 'name', 'genre'])
+        self.user_df = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
+        
         for i in self.user_games_names:
-            print(i)
-            tmp = self.game_table[self.game_table['name'] == i]
-            print(tmp)
-            self.user_df = pd.concat([self.user_df, tmp[['id', 'name', 'genre']]], ignore_index=True)
+            input_idx = self.game_table[self.game_table['name'] == i].index
+            input_df =  self.model_table.loc[input_idx]
+            self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
+            
+        self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
 
-        # print(self.user_df)
-        # print(len(self.user_games_names))
+    def filtering_data(self):
+        filtered_idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre)
+        self.model_table = self.model_table[self.model_table['id'].isin(filtered_idx)]
 
     def predict(self):
-        db_df = self.game_table[['id', 'name', 'genre']]
+        combined_df = pd.concat([self.model_table, self.user_df], ignore_index=True)
+        
+        # "genre" 열의 장르들을 숫자로 매핑
+        vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
+        genre_matrix = vectorizer.fit_transform(combined_df['genre'])
+        genre_df = pd.DataFrame(genre_matrix.toarray())
+    
+        # tag 데이터와 genre 데이터 결합
+        tag_df = combined_df.drop(['id', 'genre'], axis=1)
+        df_final = pd.concat([tag_df, genre_df], axis=1)
+        
+        # 코사인 유사도 계산
+        similarity_matrix = cosine_similarity(df_final)
 
-        print(db_df)
-
-        # 기존 게임 데이터프레임과 유저 게임 데이터프레임 통합
-        combined_df = pd.concat([db_df, self.user_df], ignore_index=True)
-
-        combined_df = combined_df.drop_duplicates(subset=['name'], keep='last')
-
-        # print(combined_df)
-
-        # TF-IDF 벡터화 객체 생성
-        vectorizer = TfidfVectorizer()
-
-        # 게임 장르 데이터를 TF-IDF 벡터로 변환
-        genre_vectors = vectorizer.fit_transform(combined_df['genre'])
-
-        # 추천을 위한 유사도 측정
-        similarities = cosine_similarity(genre_vectors[-2:], genre_vectors[:-2])
-        top_similar_indices = similarities.argsort()[0][::-1][:5] #5개 추천
+        # 유사도 행렬을 데이터프레임으로 변환
+        similarity_df = pd.DataFrame(similarity_matrix, index=df_final.index, columns=df_final.index)
+        
+        # 상위 5개 유사한 항목 찾기
+        item_id = 0  # 기준 항목의 인덱스
+        similar_items = similarity_df[item_id].nlargest(len(self.user_df) + 5)[len(self.user_df):]  # 상위 5개 유사한 항목 (자기 자신 제외)
+        similar_item_ids = similar_items.index.tolist()
 
         # 추천 게임 목록 생성
-        recommendations = combined_df.loc[top_similar_indices, 'id'].tolist()
-
+        recommendations = combined_df.loc[similar_item_ids, 'id'].tolist()
 
         return recommendations
 
@@ -105,17 +128,16 @@ def chatGPT(user_data):
     # set api key
     openai.api_key = API_KEY 
 
+    message = "{}살이상이고 {}를 가지고 있고 {}인 게임을 선호해. 해본 게임은 {}야".format(user_data.age, user_data.platform, user_data.players, user_data.games)
+
     # Call the chat GPT API
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": f"게임을 플레이한 유저의 정보 딕셔너리 형식으로 보여줄테니까 게임 5개를 설명없이 추천해줘"},
-            {"role": "system", "content": f"age는 유저의 나이고 players는 게임 인원수고 platform은 사용 가능한 게임 기기이며 games는 유저가 지금까지 한 게임이야"},
-            {"role": "system", "content": f"게임의 정식 명칭으로 추천 해주고 games에 있는 게임은 추천하지 말아줘"},
-            {"role": "assistant", "content": f"다음 예시와 같이 대답해줘. Chicory: A Colorful Tale, How to Survive, Fantasy Life, Battlezone, The Cave"},
-            {"role": "assistant", "content": f"1. The Witcher 3: Wild Hunt 2. Stardew Valley 3. Hollow Knight 4. Celeste 5. Ori and the Blind Forest"},
-            # {"role": "assistant", "content": f"전달받은 리뷰가 없으면 다음 예시로 대답해줘. 독창성: 0, 사운드: 0, 그래픽: 0, 자유도: 0, 타격감: 0, 완성도: 0, 난이도:0"},
-            {"role": "user", "content": user_data}
+            {"role": "system", "content": f"게임을 플레이한 유저의 정보를 보여줄테니까 이 정보를 바탕으로 게임 5개를 이름만 추천해줘"},
+            {"role": "system", "content": f"게임의 정식 명칭으로 추천 해주고 유저가 이미 플레이 한 게임은 추천하지 말아줘."},
+            {"role": "assistant", "content": f"다음 예시와 같이 대답해줘. 1. 게임1 2. 게임2 3. 게임3 4. 게임4 5. 게임5"},
+            {"role": "user", "content": message}
         ],
         temperature=0,
         max_tokens=100

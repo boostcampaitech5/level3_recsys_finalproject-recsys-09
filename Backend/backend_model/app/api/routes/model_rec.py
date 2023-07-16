@@ -29,8 +29,7 @@ async def model_recommend(data_input: ModelInput):
     if not data_input:
         raise HTTPException(status_code=404, detail="'data_input' argument invalid!")
     try:
-        games = data_input.get_games()
-        recommendations = get_recommendations(games)
+        recommendations = get_recommendations(data_input)
 
     except Exception as err:
         raise HTTPException(status_code=500, detail=f"Exception: {err}")

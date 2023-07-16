@@ -33,8 +33,8 @@ async def gpt_recommend(data_input: GPTInput):
     if not data_input:
         raise HTTPException(status_code=404, detail="'data_input' argument invalid!")
     try:
-        user_data = data_input.get_user_data()
-        recommendations = get_recommendations(user_data)
+        # user_data = data_input.get_user_data()
+        recommendations = get_recommendations(data_input)
         print(recommendations)
         recommendations = make_list(recommendations)
 
