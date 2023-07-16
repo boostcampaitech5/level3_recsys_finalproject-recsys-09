@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text
+from sqlalchemy import create_engine, bindparam, text
 from data_class import RecommendedGame
 import uvicorn
 from dotenv import load_dotenv
@@ -32,7 +31,7 @@ def home_page(request: Request):
     """
         시작 화면을 return한다.
     """
-    return templates.TemplateResponse("main.html", {"request": request})
+    return templates.TemplateResponse("main.html", {"request": request, "ip": os.environ['HOST'], "port": os.environ['PORT']})
 
 
 @app.get("/input")
@@ -43,7 +42,7 @@ def input_page(request: Request):
         html로 선택할 수 있는 게임 리스트를 전달한다. (DB)
     """
     
-    return templates.TemplateResponse("input.html", {"request": request, "game_list": game_list})
+    return templates.TemplateResponse("input.html", {"request": request, "game_list": game_list, "ip": os.environ['HOST'], "port": os.environ['PORT']})
 
 
 @app.post("/output")
@@ -58,36 +57,41 @@ async def output_page(request: Request):
     4. 모델 서버로 보낸 input과 모델 서버로부터 받은 output을 logging한다. (선택)
     """
     
-    age = "20"
-    platform = ["PC", "PS4"]
-    players = "1"
-    genre = ["Tactics", "Puzzle"]
-    tag = ["Graphics", "Completion", "easy"] # 긍정 0, 부정 1, 쉬움 1, 어려움 2
-    games = ["Zombie Driver: Immortal Edition", "Zumba Fitness Rush"]
+    form_data = await request.form()
+    
+    age = form_data.get("age")
+    if int(age) == 0:
+        young = form_data.get("young")
+        age = young
+    platform = form_data.getlist("platform")
+    players = form_data.get("players")
+    genre = form_data.getlist("genre")
+    tag = form_data.getlist("tag") # 긍정 0, 부정 1, 쉬움 1, 어려움 2
+    games = form_data.getlist("search")
     
     
     # content based model input
     cb_input = {
-        "age": age,
-        "platform": platform,
-        "players": players,
-        "major_genre": genre,
-        "tag": tag,
-        "games": games
+        'age': age,
+        'platform': platform,
+        'players': players,
+        'major_genre': genre,
+        'tag': tag,
+        'games': games
     }
     
     # gpt input
     gpt_input = {
-        "age": age,
-        "platform": platform,
-        "players": players,
-        "games": games
+        'age': age,
+        'platform': platform,
+        'players': players,
+        'games': games
     }
 
     #model server로 request 보내기
     cb_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/cb_model/predict", json=cb_input)
     gpt_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/gpt/predict", json=gpt_input)
-
+    
     cb_model= cb_response.json()['games']
     gpt = gpt_response.json()['games']
     
@@ -97,7 +101,10 @@ async def output_page(request: Request):
     
     with engine.connect() as con:
         for title in gpt:
-            statement = text(f"select name, img_url from game where name='{title}'")
+            title_param = bindparam("title", title)
+            
+            statement = text("select name, img_url from game where name=:title")
+            statement = statement.bindparams(title_param)
             gpt_result = con.execute(statement)
             
             for rs in gpt_result:
@@ -121,7 +128,7 @@ async def output_page(request: Request):
         "urls": url_list
     }
     
-    return templates.TemplateResponse("output.html", {"request": request, "game": RecommendedGame(**output)})
+    return templates.TemplateResponse("output.html", {"request": request, "game": RecommendedGame(**output), "ip": os.environ['HOST'], "port": os.environ['PORT']})
 
 
 if __name__ == '__main__':

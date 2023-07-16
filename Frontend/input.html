@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <title> GameP!ck </title>
-        <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.png">
-        <script src="./input.js"></script>
+        <script src="{{ url_for('static', path='/input.js')}}"></script>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
         <script>
             const add_textbox = () => {
                 const box = document.getElementById("box");
@@ -24,11 +24,11 @@
                 document.getElementById('box').removeChild(obj.parentNode);
             }
         </script>
-        <link rel="stylesheet" href="./input.css">
+        <link rel="stylesheet" href="{{ url_for('static', path='/input.css')}}">
     </head>
 
     <body>
-        <form action="./output.html" method="post" id="inputForm">
+        <form action="http://{{ ip }}:{{ port }}/output" method="post" id="inputForm">
             <fieldset>
                 <legend> <h2> 사용자 정보를 입력해주세요</h2> </legend>
                 <h3> 1. 연령대 </h3>
@@ -102,16 +102,19 @@
                 </div>
                 <div class="autocomplete"></div>
             </section>
-            <script src="./search.js"></script>
-
+            
+            <script>
+                const dataList = {{ game_list | tojson }}
+            </script>
+            <script src="{{ url_for('static', path='/search.js')}}"></script>
             <br>
             <br>
             <br>
             <br>
 
-            <input type="image" src="./image/submit_button.png" id="submit" alt="submit" width="110" height="40" disabled>
+            <input type="image" src="{{ url_for('static', path='image/submit_button.png')}}" id="submit" alt="submit" width="110" height="40" disabled>
         </form>
-        <script src="./next.js"></script>
+        <script src="{{ url_for('static', path='/next.js')}}"></script>
 
     </body>
 </html>
