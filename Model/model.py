@@ -6,7 +6,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 import os
-from filters import filter
+from src.filters import filter
 
 class ContentBaseModel():
     def __init__(self, age, platform, players, major_genre, tag, user_games_names):
