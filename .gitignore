@@ -2,6 +2,11 @@
 data/
 __pycache__
 output/
+dataset/
+general_yaml
+log/
+log_tensorboard/
+saved/
 
 # 모든 확장자 파일을 무시
 *.csv
