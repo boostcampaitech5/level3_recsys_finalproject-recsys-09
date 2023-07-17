@@ -8,7 +8,7 @@
     </head>
     <body style="background-color:rgb(255, 245, 230)">
         <div class="container">
-            {% for key, game in games.itmes() %}
+            {% for key, game in games.items() %}
                 <img src="{{game[1]}}" alt="game"> <br>
                 <h3>{{game[0]}}</h3>
                 <h4> platforms : {{game[2]}}</h4>
