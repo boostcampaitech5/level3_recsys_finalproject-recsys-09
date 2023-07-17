@@ -61,29 +61,32 @@
                 <input type="radio" name="players" value="2"> 2명(duo)
                 <input type="radio" name="players" value="4"> 4인 이하
                 <input type="radio" name="players" value="5"> 5인 이상
+                <input type="radio" name="players" value="0"> 상관 없음
 
                 <h3> 2. 선호하는 장르 (모두 골라주세요) </h3>
-                <input type="checkbox" name="genre" value="RPG"> RPG <br>
-                <input type="checkbox" name="genre" value="Shooting"> FPS / Shooting <br>
-                <input type="checkbox" name="genre" value="AOS"> AOS / MOBA <br>
-                <input type="checkbox" name="genre" value="Action"> 액션 <br>
-                <input type="checkbox" name="genre" value="Tactics"> 전략 <br>
-                <input type="checkbox" name="genre" value="Puzzle"> 퍼즐 <br>
-                <input type="checkbox" name="genre" value="Simulation"> 시뮬레이션 <br>
-                <input type="checkbox" name="genre" value="Adventure"> 어드벤처 <br>
-                <input type="checkbox" name="genre" value="Sports"> 스포츠 <br>
-                <input type="checkbox" name="genre" value="Arcade"> 아케이드 <br>
-                <input type="checkbox" name="genre" value="Racing"> 레이싱 <br>
+                <input type="checkbox" name="selectall" value="all" onclick="selectAll(this)"> 모두 선택 <br>
+                <input type="checkbox" name="genre" value="RPG" onclick='checkSelectAll()'> RPG <br>
+                <input type="checkbox" name="genre" value="Shooting" onclick='checkSelectAll()'> FPS / Shooting <br>
+                <input type="checkbox" name="genre" value="AOS" onclick='checkSelectAll()'> AOS / MOBA <br>
+                <input type="checkbox" name="genre" value="Action" onclick='checkSelectAll()'> 액션 <br>
+                <input type="checkbox" name="genre" value="Tactics" onclick='checkSelectAll()'> 전략 <br>
+                <input type="checkbox" name="genre" value="Puzzle" onclick='checkSelectAll()'> 퍼즐 <br>
+                <input type="checkbox" name="genre" value="Simulation" onclick='checkSelectAll()'> 시뮬레이션 <br>
+                <input type="checkbox" name="genre" value="Adventure" onclick='checkSelectAll()'> 어드벤처 <br>
+                <input type="checkbox" name="genre" value="Sports" onclick='checkSelectAll()'> 스포츠 <br>
+                <input type="checkbox" name="genre" value="Arcade" onclick='checkSelectAll()'> 아케이드 <br>
+                <input type="checkbox" name="genre" value="Racing" onclick='checkSelectAll()'> 레이싱 <br>
 
                 <h3> 3. 선호하는 게임 태그 (모두 골라주세요) </h3>
-                <input type="checkbox" name="tag" value="Graphics"> 작화 / 디자인 <br>
-                <input type="checkbox" name="tag" value="Sound"> 음향 / 사운드 <br>
-                <input type="checkbox" name="tag" value="Creativity"> 독창성 <br>
-                <input type="checkbox" name="tag" value="Freedom"> 자유도 <br>
-                <input type="checkbox" name="tag" value="Hitting"> 타격감 <br>
-                <input type="checkbox" name="tag" value="Completion"> 완성도 <br>
-                <input type="checkbox" name="tag" value="hard"> 높은 난이도 <br>
-                <input type="checkbox" name="tag" value="easy"> 낮은 난이도 <br>
+                <input type="checkbox" name="tag" value="Graphics" onclick="dontCareDisable();"> 작화 / 디자인 <br>
+                <input type="checkbox" name="tag" value="Sound" onclick="dontCareDisable();"> 음향 / 사운드 <br>
+                <input type="checkbox" name="tag" value="Creativity" onclick="dontCareDisable();"> 독창성 <br>
+                <input type="checkbox" name="tag" value="Freedom" onclick="dontCareDisable();"> 자유도 <br>
+                <input type="checkbox" name="tag" value="Hitting" onclick="dontCareDisable();"> 타격감 <br>
+                <input type="checkbox" name="tag" value="Completion" onclick="dontCareDisable();"> 완성도 <br>
+                <input type="checkbox" name="tag" id="hard" value="hard" onclick="hardLevelSelect(); dontCareDisable();"> 높은 난이도 <br>
+                <input type="checkbox" name="tag" id="easy" value="easy" onclick="easyLevelSelect(); dontCareDisable();"> 낮은 난이도 <br>
+                <input type="checkbox" name="none" id="none" value="all" onclick="dontCare()"> 상관없음 <br>
             </fieldset>
             
             <section>
