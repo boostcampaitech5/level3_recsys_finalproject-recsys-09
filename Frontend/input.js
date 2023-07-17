@@ -7,6 +7,11 @@ function fieldsetActive()  {
 function fieldsetDisable()  {
     const target = document.getElementById('young');
     target.disabled = true;
+
+    const young = document.getElementsByName('young')
+    young.forEach((checkbox) => {
+      checkbox.checked = false;
+    })
   }
 
 //전체 선택 함수

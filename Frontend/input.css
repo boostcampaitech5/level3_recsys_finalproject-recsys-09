@@ -23,3 +23,33 @@ section {
     margin-top: 2rem;
 }
 
+.container {
+    margin: 0 auto;
+    width: 375px;
+    text-align: center;
+    background-color: white;
+}
+
+[type="radio"] {
+    appearance: none;
+    border: max(2px, 0.1em) solid gray;
+    border-radius: 50%;
+    width: 1.25em;
+    height: 1.25em;
+  }
+  
+[type="radio"]:checked {
+border: 0.4em solid tomato;
+}
+
+[type="radio"]:disabled {
+background-color: lightgray;
+box-shadow: none;
+opacity: 0.7;
+cursor: not-allowed;
+}
+
+[type="radio"]:disabled + span {
+opacity: 0.7;
+cursor: not-allowed;
+}
