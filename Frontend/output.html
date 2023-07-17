@@ -6,30 +6,12 @@
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
     </head>
     <body>
-        <p>
-            <img src="{{game['urls'][0]}}" alt="game1"> <br>
-            <h3>{{game['games'][0]}}</h3>
-        </p>
 
-        <p>
-            <img src="{{game['urls'][1]}}" alt="game1"> <br>
-            <h3>{{game['games'][1]}}</h3>
-        </p>
-
-        <p>
-            <img src="{{game['urls'][2]}}" alt="game1"> <br>
-            <h3>{{game['games'][2]}}</h3>
-        </p>
-
-        <p>
-            <img src="{{game['urls'][3]}}" alt="game1"> <br>
-            <h3>{{game['games'][3]}}</h3>
-        </p>
-
-        <p>
-            <img src="{{game['urls'][4]}}" alt="game1"> <br>
-            <h3>{{game['games'][4]}}</h3>
-        </p>
+        {% for game in games %}
+            <img src="{{game[1]}}" alt="game"> <br>
+            <h3>{{game[0]}}</h3>
+            <h4> platforms : {{game[2]}}</h4>
+        {% endfor %}
 
         <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/';" alt="start" width="110" height="40">
     </body>
