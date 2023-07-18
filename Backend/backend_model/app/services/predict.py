@@ -162,13 +162,17 @@ class EASE_base:
         train['label_user'] = self.user_enc.transform(train.user)
         train['label_item'] = self.item_enc.transform(train.item)
         train_groupby = train.groupby('label_user')
-        with Pool(cpu_count()) as p:
-            user_preds = p.starmap(
-                self.predict_by_user,
-                [(user, group, self.pred[user, :], items, top_k) for user, group in train_groupby],
-            )
-        pred_df = pd.concat(user_preds)
-        pred_df['user'] = self.user_enc.inverse_transform(pred_df['user'])
+
+        if -1 in users:
+            user = -1
+            group = train_groupby.get_group(self.user_enc.transform([user])[0])
+            pred = self.pred[self.user_enc.transform([user])[0], :]
+            items = items[np.isin(items, group['label_item'].unique(), invert=True)]
+            user_pred = self.predict_by_user(user, group, pred, items, top_k)
+            pred_df = user_pred
+        else:
+            pred_df = pd.DataFrame(columns=["user", "item", "score"])
+
         pred_df['item'] = self.item_enc.inverse_transform(pred_df['item'])
         return pred_df
 
