@@ -1,6 +1,9 @@
+from fastapi import Depends
 from sqlalchemy import bindparam, text
+from sqlalchemy.orm import Session
 import requests
 import os
+from database.db import get_db
 
 
 def get_response(model, user, api):
@@ -11,7 +14,7 @@ def get_response(model, user, api):
     return response.json()['games']
 
 
-def create_response(cb_model, gpt, db):
+def create_response(cb_model, gpt, db: Session = Depends(get_db)):
     game_dic = {}
     dic_len = 0
     

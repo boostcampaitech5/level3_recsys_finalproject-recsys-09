@@ -1,15 +1,13 @@
 from fastapi import APIRouter, Request, Depends
-from sqlalchemy.orm import Session
 from schemas.response import OutputResponse
 from schemas.request import UserRequest, CBRequest, GPTRequest
-from database.db import get_db
 from core.preload import get_template
 from core.output_process import get_response, create_response
 
 output_router = APIRouter(prefix="/output")
 
 @output_router.post("/")
-async def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_form), db: Session = Depends(get_db)):
+def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_form)):
     """
     user에게 받은 input을 model의 input으로 넘겨주고 추천 game을 받아 output page를 return한다.
     
@@ -27,7 +25,7 @@ async def output_page(request: Request, user: UserRequest = Depends(UserRequest.
     gpt = get_response(GPTRequest, user, 'gpt')
     
     # model server response 처리를 통한 추천 game list 생성
-    game_dic = create_response(cb_model, gpt, db)
+    game_dic = create_response(cb_model, gpt)
 
     return templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
 
