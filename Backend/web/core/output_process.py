@@ -2,14 +2,13 @@ from fastapi import Depends
 from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session
 import requests
-import os
 from database.db import get_db
-
+from core.config import MODEL_HOST, MODEL_PORT
 
 def get_response(model, user, api):
     input = model(**user.__dict__)
     
-    response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/{api}/predict", json=input.__dict__)
+    response = requests.post(f"http://{MODEL_HOST}:{MODEL_PORT}/api/{api}/predict", json=input.__dict__)
     
     return response.json()['games']
 

@@ -1,10 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from dotenv import load_dotenv
 import uvicorn
-
-load_dotenv()
-
 from api.home import home_router
 from api.input import input_router
 from api.output import output_router

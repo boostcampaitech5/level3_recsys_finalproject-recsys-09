@@ -1,11 +1,11 @@
 from fastapi import Request
 from pydantic import BaseModel
-import os
+from core.config import HOST, PORT
 
 class BaseResponse(BaseModel):
     request: Request
-    ip: str = os.environ['HOST']
-    port: str = os.environ['PORT']
+    ip: str = HOST
+    port: str = PORT
     
     class Config:
         arbitrary_types_allowed = True
