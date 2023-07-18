@@ -4,6 +4,7 @@ __pycache__
 output/
 dataset/
 general_yaml
+context_yaml
 log/
 log_tensorboard/
 saved/
