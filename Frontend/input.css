@@ -13,7 +13,6 @@
 
 section {
     width: 500px;
-    padding: 1.5rem 1.6rem;
     box-shadow: 0 0 1rem rgba(0, 0, 0, .05);  
     border-radius: 5px;
     display: flex;
@@ -25,8 +24,7 @@ section {
 
 .container {
     margin: 0 auto;
-    width: 375px;
-    text-align: center;
+    width: 500px;
     background-color: white;
 }
 
