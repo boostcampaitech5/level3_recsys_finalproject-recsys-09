@@ -96,7 +96,7 @@ class ContentBaseModel():
         self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
 
     def filtering_data(self):
-        filtered_idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre)
+        filtered_idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
         self.model_table = self.model_table[self.model_table['id'].isin(filtered_idx)]
 
     def predict(self):
