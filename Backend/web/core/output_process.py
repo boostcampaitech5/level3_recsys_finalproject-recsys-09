@@ -42,3 +42,21 @@ def create_response(cb_model, gpt, db: Session = Depends(get_db)):
                 dic_len += 1
     
     return game_dic
+
+
+def ab_create_response(model, type, db: Session = Depends(get_db)):
+    game_dic = {}
+    dic_len = 0
+    
+    with get_db() as con:
+        for game in model:
+            param = bindparam(type, game)
+            statement = text(f"select name, img_url, platform from game where {type}=:{type}")
+            statement = statement.bindparams(param)
+            result = con.execute(statement)
+            
+            for rs in result:
+                game_dic[dic_len] = rs
+                dic_len += 1
+    
+    return game_dic
