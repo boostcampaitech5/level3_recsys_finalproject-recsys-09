@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="{{ url_for('static', path='/output.css')}}">
     </head>
     <body style="background-color:rgb(255, 245, 230)">
-        <form>
+        <form method="post" action = "http://{{ ip }}:{{ port }}/output/feedback"  id="feedbackForm">
             <div class="container">
                 {% for key, game in games.items() %}
                     <img src="{{game[1]}}" alt="game"> <br>
@@ -32,19 +32,33 @@
                         text-shadow: 0 0 0 #777;
                     }
                     </style>
-                    <button class="btn-like" value = {{game[0]}}>👍</button>
-                    
-                    <script src="https://code.jquery.com/jquery.min.js"></script>
-                    <script>
-                    $(".btn-like").click(function() {
-                        $(this).toggleClass("done");
-                    })
-                    </script> <br>
-    
+                    <button type="button" name="{{key}}" class="btn-like">👍</button>
+                    <input type="hidden" id="{{key}}" name="dislike" value="{{game[0]}}">
+
+                    <br>
+                    <br>
+                    <br>
                 {% endfor %}
                 
+                                    
+                <script src="https://code.jquery.com/jquery.min.js"></script>
+                <script>
+                $(".btn-like").click(function() {
+                    $(this).toggleClass("done");
+
+                    var id = $(this).attr("name");
+
+                    if ($("#" + id).attr("name") === "dislike") {
+                        $("#" + id).attr("name", "like");
+                    }
+                    else {
+                        $("#" + id).attr("name", "dislike");
+                    }
+                })
+                </script> 
+
                 home 버튼을 꼭 눌러주세요!
-                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/';" alt="start" width="110" height="40">
+                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" alt="start" width="110" height="40">
             </div>
         </form>
 
