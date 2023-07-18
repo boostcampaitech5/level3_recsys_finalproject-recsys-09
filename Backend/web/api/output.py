@@ -1,16 +1,15 @@
 from fastapi import APIRouter, Request, Depends
-from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session
-import requests
-import os
-from schemas.data_class import RecommendedGame
+from schemas.response import OutputResponse
+from schemas.request import UserRequest, CBRequest, GPTRequest
 from database.db import get_db
 from core.preload import get_template
+from core.output_process import get_response, create_response
 
 output_router = APIRouter(prefix="/output")
 
 @output_router.post("/")
-async def output_page(request: Request, db: Session = Depends(get_db)):
+async def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_form), db: Session = Depends(get_db)):
     """
     user에게 받은 input을 model의 input으로 넘겨주고 추천 game을 받아 output page를 return한다.
     
@@ -23,78 +22,12 @@ async def output_page(request: Request, db: Session = Depends(get_db)):
     
     templates =  get_template()
     
-    form_data = await request.form()
+    # model server로 request 보내기
+    cb_model = get_response(CBRequest, user, 'cb_model')
+    gpt = get_response(GPTRequest, user, 'gpt')
     
-    age = form_data.get("age")
-    if int(age) == 0:
-        young = form_data.get("young")
-        age = young
-    platform = form_data.getlist("platform")
-    players = form_data.get("players")
-    genre = form_data.getlist("genre")
-    tag = form_data.getlist("tag") # 긍정 0, 부정 1, 쉬움 1, 어려움 2
-    games = form_data.getlist("search")
-    
-    
-    # content based model input
-    cb_input = {
-        'age': age,
-        'platform': platform,
-        'players': players,
-        'major_genre': genre,
-        'tag': tag,
-        'games': games
-    }
-    
-    # gpt input
-    gpt_input = {
-        'age': age,
-        'platform': platform,
-        'players': players,
-        'games': games
-    }
+    # model server response 처리를 통한 추천 game list 생성
+    game_dic = create_response(cb_model, gpt, db)
 
-    print(cb_input, gpt_input)
-    #model server로 request 보내기
-    cb_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/cb_model/predict", json=cb_input)
-    gpt_response = requests.post(f"http://{os.environ['MODEL_HOST']}:{os.environ['MODEL_PORT']}/api/gpt/predict", json=gpt_input)
-    
-    print(cb_response.json(), gpt_response.json())
-    cb_model= cb_response.json()['games']
-    gpt = gpt_response.json()['games']
-    
-    # model server response 처리
-    game_list = []
-    url_list = []
-    
-    with get_db() as con:
-        for title in gpt:
-            title_param = bindparam("title", title)
-            
-            statement = text("select name, img_url from game where name=:title")
-            statement = statement.bindparams(title_param)
-            gpt_result = con.execute(statement)
-            
-            for rs in gpt_result:
-                if len(game_list) == 4:
-                    break
-                game_list.append(rs[0])
-                url_list.append(rs[1])
-        
-        for id in cb_model:
-            statement = text(f"select name, img_url from game where id={id}")
-            cb_result = con.execute(statement)
-            
-            for rs in cb_result:
-                if len(game_list) == 5:
-                    break
-                game_list.append(rs[0])
-                url_list.append(rs[1])
-    
-    output = {
-        "games": game_list,
-        "urls": url_list
-    }
-    
-    return templates.TemplateResponse("output.html", {"request": request, "game": RecommendedGame(**output), "ip": os.environ['HOST'], "port": os.environ['PORT']})
+    return templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
 

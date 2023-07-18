@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
-import os
 from core.preload import get_game_list, get_template
+from schemas.response import InputResponse
 
 input_router = APIRouter(prefix="/input")
 
@@ -15,4 +15,4 @@ def input_page(request: Request):
     game_list = get_game_list()
     templates = get_template()
     
-    return templates.TemplateResponse("input.html", {"request": request, "game_list": game_list, "ip": os.environ['HOST'], "port": os.environ['PORT']})
+    return templates.TemplateResponse("input.html", InputResponse(request=request, game_list=game_list).__dict__)

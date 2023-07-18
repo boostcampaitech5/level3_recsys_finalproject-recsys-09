@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
-import os
 from core.preload import get_template
+from schemas.response import BaseResponse
 
 home_router = APIRouter(prefix="/home")
 
@@ -12,4 +12,4 @@ def home_page(request: Request):
     
     templates = get_template()
     
-    return templates.TemplateResponse("main.html", {"request": request, "ip": os.environ['HOST'], "port": os.environ['PORT']})
+    return templates.TemplateResponse("main.html", BaseResponse(request=request).__dict__)
