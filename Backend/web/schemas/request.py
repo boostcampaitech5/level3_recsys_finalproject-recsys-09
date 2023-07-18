@@ -26,6 +26,17 @@ class UserRequest(BaseModel):
         return cls(age=age, young=young, platform=platform, players=players, major_genre=genre, tag=tag, games=search)
     
 
+class FeedbackRequest(BaseModel):
+    like: list
+    
+    @classmethod
+    def as_form(
+        cls,
+        like: list = Form(...)
+    ):
+        return cls(like=like)
+
+
 class CBRequest(BaseModel):
     age: str
     platform: list
