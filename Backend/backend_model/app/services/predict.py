@@ -137,14 +137,11 @@ class EASE_base:
     def train(self, df):
         X = self.generate_rating_matrix(df)
         self.X = X
-        G = X.T.dot(X).toarray() # G = X'X
-        diag_indices = list(range(G.shape[0]))
-        G[diag_indices, diag_indices] += self._lambda  # X'X + λI
+        G = X.T.dot(X).toarray() + self._lambda * np.eye(X.shape[1])  # G = X'X + λI
         P = np.linalg.inv(G)  # P = (X'X + λI)^(-1)
 
         B = P / -np.diag(P)  # - P_{ij} / P_{jj} if i ≠ j
-        min_dim = min(B.shape)  
-        B[range(min_dim), range(min_dim)] = 0  # 대각행렬 원소만 0으로 만들어주기 위해
+        np.fill_diagonal(B, 0)  # 대각행렬 원소를 0으로 설정
         self.B = B
         self.pred = X.dot(B)
     
