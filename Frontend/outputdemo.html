@@ -112,17 +112,19 @@
                     }
                 })
                 </script> 
+
+                <br>
+                <br>
+                설문 조사 제출까지 부탁드려요🥹
+                <br>
+                <br>
+        
+                <a href="https://forms.gle/4qAWegVuT4UuLMkE8" onclick="submitForm(event)">
+                    <img src="{{ url_for('static', path='./image/survey_button.png')}}" alt="surveybutton" width="440" height="70">
+                </a>
+
             </div>
         </form>          
-        <br>
-        <br>
-        설문 조사 제출까지 부탁드려요🥹
-        <br>
-        <br>
-
-        <a href="https://forms.gle/4qAWegVuT4UuLMkE8" onclick="submitForm(event)">
-            <img src="{{ url_for('static', path='./image/survey_button.png')}}" alt="surveybutton" width="440" height="70">
-        </a>
         
         <script>
             function submitForm(event) {
