@@ -22,3 +22,4 @@ class OutputResponse(BaseResponse):
 class ABOutputResponse(BaseResponse):
     gpt: dict
     cb_model: dict
+    cf_model: dict

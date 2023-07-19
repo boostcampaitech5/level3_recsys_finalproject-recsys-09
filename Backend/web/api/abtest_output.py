@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends
-from schemas.response import ABOutputResponse, BaseResponse
-from schemas.request import UserRequest, CBRequest, GPTRequest, FeedbackRequest
+from schemas.response import ABOutputResponse
+from schemas.request import UserRequest, CBRequest, GPTRequest
 from core.preload import get_template
 from core.output_process import get_response, ab_create_response
 
@@ -18,23 +18,16 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     4. 모델 서버로 보낸 input과 모델 서버로부터 받은 output을 logging한다. (선택)
     """
     
-    templates =  get_template()
+    templates = get_template()
     
     # model server로 request 보내기
     cb_model = get_response(CBRequest, user, 'cb_model')
     gpt = get_response(GPTRequest, user, 'gpt')
+    cf_model = get_response(CBRequest, user, 'cf_model')
     
     # model server response 처리를 통한 추천 game list 생성
-    cb_dic = ab_create_response(cb_model, "id")
-    gpt_dic = ab_create_response(gpt, "name")
+    cb_dic = ab_create_response(cb_model, "cb", "id")
+    gpt_dic = ab_create_response(gpt, "gpt", "name")
+    cf_dic = ab_create_response(cf_model, "cf","id")
 
-    return templates.TemplateResponse("output.html", ABOutputResponse(request=request, cb_model=cb_dic, gpt=gpt_dic).__dict__)
-
-
-@output_router.post("/feedback")
-def get_feedback(request: Request, feedback: FeedbackRequest = Depends(FeedbackRequest.as_form)):
-    
-    templates =  get_template()
-    
-    return templates.TemplateResponse("main.html", BaseResponse(request=request).__dict__)
-
+    return templates.TemplateResponse("outputdemo.html", ABOutputResponse(request=request, cb_model=cb_dic, gpt=gpt_dic, cf_model=cf_dic).__dict__)
