@@ -1,6 +1,7 @@
 # model
 from sklearn.feature_extraction.text import CountVectorizer
 from scipy.spatial.distance import cosine
+from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
 from sklearn.preprocessing import LabelEncoder
 from multiprocessing import Pool, cpu_count
@@ -23,6 +24,9 @@ class ContentBaseModel():
         self.players = players
         self.major_genre = major_genre
         self.tag = tag
+        
+        if self.tag[0] == -1: # tag 상관없음 처리
+            self.tag = -1
 
         self.load_game_data()
         self.preprocess_input()
@@ -30,20 +34,28 @@ class ContentBaseModel():
         
 
     def load_game_data(self):
-        engine = create_engine(POSTGRE)
+        #engine = create_engine(POSTGRE)
+        load_dotenv()
+        engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
         self.game_table = pd.read_sql_table(table_name="game", con=engine)
         self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
 
+        if self.tag == -1:
+            self.model_table = self.model_table[['id', 'genre']]
+
     def preprocess_input(self):
-        print("-----------------------------------------------------------------------------")
-        self.user_df = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
+        if self.tag == -1:
+            self.user_df = pd.DataFrame(columns=['id', 'genre'])
+        else: 
+            self.user_df = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
         
         for i in self.user_games_names:
             input_idx = self.game_table[self.game_table['name'] == i].index
             input_df =  self.model_table.loc[input_idx]
             self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
             
-        self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
+        if self.tag != -1:
+            self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
 
     def filtering_data(self):
         filtered_idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
@@ -51,15 +63,16 @@ class ContentBaseModel():
 
     def predict(self):
         combined_df = pd.concat([self.model_table, self.user_df], ignore_index=True)
-        
         # "genre" 열의 장르들을 숫자로 매핑
         vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
         genre_matrix = vectorizer.fit_transform(combined_df['genre'])
         genre_df = pd.DataFrame(genre_matrix.toarray())
     
         # tag 데이터와 genre 데이터 결합
-        tag_df = combined_df.drop(['id', 'genre'], axis=1)
-        df_final = pd.concat([tag_df, genre_df], axis=1)
+        if self.tag == -1:
+            tag_df = combined_df.drop(['id', 'genre'], axis=1)
+            df_final = pd.concat([tag_df, genre_df], axis=1)
+        else: df_final = genre_df
         
         # 코사인 유사도 계산
         similarity_matrix = cosine_similarity(df_final)
@@ -73,7 +86,7 @@ class ContentBaseModel():
         similar_item_ids = similar_items.index.tolist()
 
         # 추천 게임 목록 생성
-        recommendations = df_final.loc[similar_item_ids, 'id'].tolist()
+        recommendations = combined_df.loc[similar_item_ids, 'id'].tolist()
 
         return recommendations
     
@@ -103,7 +116,6 @@ class EASEModel():
         self.user_table = self.user_table.sort_values(by='user_idx') 
 
     def preprocess(self):
-        print("-----------------------------------------------------------------------------")
         # input preprocess
         self.game_id = []
         for i in self.user_games_names:
@@ -134,11 +146,11 @@ class EASEModel():
         self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.game_id))
         
         similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
-        similarity_df = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
+        similarity_df_ = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
         
-        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df['item']))]
+        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df_['item']))]
         df_extracted = df_extracted.set_index('id')
-        df_extracted = df_extracted.loc[list(similarity_df['item'])]
+        df_extracted = df_extracted.loc[list(similarity_df_['item'])]
         df_extracted = df_extracted.reset_index()
 
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
