@@ -3,10 +3,15 @@
     <head>
         <meta charset="utf-8">
         <title> GameP!ck </title>
-        <link rel="shortcut icon" type="image/x-icon" href="./image/favicon.png">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
+        <link rel="stylesheet" href="{{ url_for('static', path='./main.css')}}">
     </head>
-    <body>
-        <img src="{{ url_for('static', path='./image/logo.png')}}" alt="logo">
-        <input type="image" src="{{ url_for('static', path='./image/start_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/input';" alt="start" width="110" height="40">
+    <body style="background-color:rgb(255, 245, 230)">
+        <div class="container">
+            <br> <br>
+            <img src="{{ url_for('static', path='./image/logo.png')}}" alt="logo" width="340" height="270"> <br> <br>
+            <h2>플랫폼 통합 게임 추천 서비스</h2> <br> <br>
+            <input type="image" src="{{ url_for('static', path='./image/start_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/input';" alt="start" width="165" height="60">
+        </div>
     </body>
 </html>

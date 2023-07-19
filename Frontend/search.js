@@ -1,5 +1,4 @@
 // 자동 완성 기능 구현
-const dataList = ["hollow knight", "league of legends", "battle ground", "starcraft", "teamfight tactics"];
 const $autoComplete = document.querySelector(".autocomplete");
 
 var $search = document.getElementsByName("search");

@@ -4,7 +4,6 @@ const platformInput = document.getElementsByName('platform')
 const playerInput = document.getElementsByName('players')
 const genreInput = document.getElementsByName('genre')
 const tagInput = document.getElementsByName('tag')
-const gameInput = document.getElementsByName('search')
 const submit = document.getElementById('submit')
 
 let validate = {
@@ -13,7 +12,6 @@ let validate = {
   "playerInput" : false,
   "genreInput" : false,
   "tagInput" : false,
-  "gameInput" : false
 }
 
 ageInput.forEach(age => age.addEventListener('input', checkFormValidity));
@@ -22,11 +20,10 @@ platformInput.forEach(platform => platform.addEventListener('input', checkFormVa
 playerInput.forEach(player => player.addEventListener('input', checkFormValidity));
 genreInput.forEach(genre => genre.addEventListener('input', checkFormValidity));
 tagInput.forEach(tag => tag.addEventListener('input', checkFormValidity));
-gameInput.forEach(game => game.addEventListener('input', checkFormValidity));
 
 function checkFormValidity() {
   checkElement();
-  if (validate["ageInput"] && validate["platformInput"] && validate["playerInput"] && validate["genreInput"] && validate["tagInput"] && validate["gameInput"]) {
+  if (validate["ageInput"] && validate["platformInput"] && validate["playerInput"] && validate["genreInput"] && validate["tagInput"]) {
     submit.disabled = false; // 제출 버튼 활성화
   } else {
     submit.disabled = true; // 제출 버튼 비활성화
@@ -40,7 +37,6 @@ function checkElement(){
   let playerValue = false
   let genreValue = false
   let tagValue = false
-  let gameValue = false
 
   if (ageInput[0].checked) {
     validate["ageInput"] = true
@@ -79,17 +75,8 @@ function checkElement(){
     }
   })
 
-  gameInput.forEach(function(game){
-    if (game.value) {
-      gameValue = true
-    }
-  })
-
-
-
   validate["platformInput"] = platformValue
   validate["playerInput"] = playerValue
   validate["genreInput"]= genreValue
   validate["tagInput"] = tagValue
-  validate["gameInput"]= gameValue
 }
