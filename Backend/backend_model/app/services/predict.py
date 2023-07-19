@@ -80,9 +80,8 @@ class ContentBaseModel():
         return user_tag
 
     def load_game_data(self):
-        engine = create_engine(POSTGRE)
-        self.game_table = pd.read_sql_table(table_name="game", con=engine)
-        self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+        self.game_table = pd.read_csv("./data/game_table.csv")
+        self.model_table = pd.read_csv("./data/cb_model_table.csv")
 
     def preprocess_input(self):
         print("-----------------------------------------------------------------------------")
@@ -263,7 +262,7 @@ def chatGPT(user_data):
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": f"게임을 플레이한 유저의 정보를 보여줄테니까 이 정보를 바탕으로 게임 5개를 이름만 추천해줘"},
-            {"role": "system", "content": f"게임의 정식 명칭으로 추천 해주고 유저가 이미 플레이 한 게임은 추천하지 말아줘."},
+            {"role": "system", "content": f"게임의 영어 정식 명칭으로 추천 해주고 유저가 이미 플레이 한 게임은 추천하지 말아줘."},
             {"role": "assistant", "content": f"다음 예시와 같이 대답해줘. 1. 게임1 2. 게임2 3. 게임3 4. 게임4 5. 게임5"},
             {"role": "user", "content": message}
         ],
