@@ -1,0 +1,30 @@
+.container {
+    margin: 0 auto;
+    width: 1000px;
+    text-align: center;
+    background-color: white;
+}
+
+.gptcontainer {
+    display: inline-block;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.cbcontainer {
+    display: inline-block;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.cfcontainer {
+    display: inline-block;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
