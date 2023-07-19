@@ -32,7 +32,6 @@ class ContentBaseModel():
         self.preprocess_input()
         self.filtering_data()
         
-
     def load_game_data(self):
         #engine = create_engine(POSTGRE)
         load_dotenv()
@@ -45,10 +44,11 @@ class ContentBaseModel():
 
     def preprocess_input(self):
         if self.tag == -1:
-            self.user_df = pd.DataFrame(columns=['id', 'genre'])
-        else: 
-            self.user_df = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
-        
+            columns=['id', 'genre']
+        else:
+            columns = ['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty']
+        self.user_df = pd.DataFrame(columns=columns)
+
         for i in self.user_games_names:
             input_idx = self.game_table[self.game_table['name'] == i].index
             input_df =  self.model_table.loc[input_idx]
@@ -109,11 +109,7 @@ class EASEModel():
         engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
         self.game_table = pd.read_sql_table(table_name="game", con=engine)
         self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
-        
-        train_set = pd.read_sql_table(table_name="user_train", con=engine)
-        test_set = pd.read_sql_table(table_name="user_test", con=engine)
-        self.user_table = pd.concat([train_set, test_set])
-        self.user_table = self.user_table.sort_values(by='user_idx') 
+        self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
 
     def preprocess(self):
         # input preprocess
