@@ -3,6 +3,7 @@ from schemas.response import ABOutputResponse
 from schemas.request import UserRequest, CBRequest, GPTRequest
 from core.preload import get_template
 from core.output_process import get_response, ab_create_response
+from core.save_db import save_user_info, save_model_output
 
 output_router = APIRouter(prefix="/output")
 
@@ -20,6 +21,8 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     
     templates = get_template()
     
+    id = save_user_info(user)
+    
     # model server로 request 보내기
     cb_model = get_response(CBRequest, user, 'cb_model')
     gpt = get_response(GPTRequest, user, 'gpt')
@@ -29,5 +32,10 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     cb_dic = ab_create_response(cb_model, "cb", "id")
     gpt_dic = ab_create_response(gpt, "gpt", "name")
     cf_dic = ab_create_response(cf_model, "cf","id")
-
-    return templates.TemplateResponse("outputdemo.html", ABOutputResponse(request=request, cb_model=cb_dic, gpt=gpt_dic, cf_model=cf_dic).__dict__)
+    
+    save_model_output(id, cb_dic, gpt_dic, cf_dic)
+    
+    response = templates.TemplateResponse("outputdemo.html", ABOutputResponse(request=request, cb_model=cb_dic, gpt=gpt_dic, cf_model=cf_dic).__dict__)
+    response.set_cookie(key="id", value=id)
+    
+    return response
