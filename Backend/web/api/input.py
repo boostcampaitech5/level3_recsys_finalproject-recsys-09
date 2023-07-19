@@ -18,10 +18,4 @@ def input_page(request: Request):
     
     response = templates.TemplateResponse("input.html", InputResponse(request=request, game_list=game_list).__dict__)
     
-    cookie_id = request.cookies.get("id")
-    
-    if not cookie_id:
-        cookie_id = str(uuid.uuid4())
-        response.set_cookie(key="id", value=cookie_id, httponly=True)
-    
     return response
