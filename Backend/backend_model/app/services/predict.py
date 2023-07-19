@@ -63,6 +63,9 @@ class ContentBaseModel():
         self.major_genre = user_data.major_genre
         self.tag = self.tag_preprocessing(user_data.tag)
 
+        if self.tag[0] == -1: # tag 상관없음 처리
+            self.tag = -1
+
         self.load_game_data()
         self.preprocess_input()
         self.filtering_data()
@@ -71,31 +74,38 @@ class ContentBaseModel():
         tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy', 'hard']
         user_tag = []
         for i in tag_list:
-            if i == "hard":
+            if i == 'hard':
                 user_tag.append(2)
             elif i in tags:
                 user_tag.append(1)
             else:
                 user_tag.append(0)
+        if 'all' in tags:
+            user_tag = [-1, -1, -1, -1, -1, -1, -1]
         return user_tag
 
     def load_game_data(self):
         engine = create_engine(POSTGRE)
         self.game_table = pd.read_sql_table(table_name="game", con=engine)
         self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
-        # self.game_table = pd.read_csv("./data/game_table.csv")
-        # self.model_table = pd.read_csv("./data/cb_model_table.csv")
+        
+        if self.tag == -1:
+            self.model_table = self.model_table[['id', 'genre']]
 
     def preprocess_input(self):
-        print("-----------------------------------------------------------------------------")
-        self.user_df = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
-        
+        if self.tag == -1:
+            columns=['id', 'genre']
+        else:
+            columns = ['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty']
+        self.user_df = pd.DataFrame(columns=columns)
+
         for i in self.user_games_names:
             input_idx = self.game_table[self.game_table['name'] == i].index
             input_df =  self.model_table.loc[input_idx]
             self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
             
-        self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
+        if self.tag != -1:
+            self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
 
     def filtering_data(self):
         filtered_idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
@@ -110,8 +120,10 @@ class ContentBaseModel():
         genre_df = pd.DataFrame(genre_matrix.toarray())
     
         # tag 데이터와 genre 데이터 결합
-        tag_df = combined_df.drop(['id', 'genre'], axis=1)
-        df_final = pd.concat([tag_df, genre_df], axis=1)
+        if self.tag == -1:
+            tag_df = combined_df.drop(['id', 'genre'], axis=1)
+            df_final = pd.concat([tag_df, genre_df], axis=1)
+        else: df_final = genre_df
         
         # 코사인 유사도 계산
         similarity_matrix = cosine_similarity(df_final)
@@ -136,35 +148,18 @@ class EASEModel():
         self.platform = user_data.platform
         self.players = int(user_data.players)
         self.major_genre = user_data.major_genre
-        self.tag = self.tag_preprocessing(user_data.tag)
 
         self.load_game_data()
         self.preprocess()
-
-    def tag_preprocessing(self, tags):
-        tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy', 'hard']
-        user_tag = []
-        for i in tag_list:
-            if i == "hard":
-                user_tag.append(2)
-            elif i in tags:
-                user_tag.append(1)
-            else:
-                user_tag.append(0)
-        return user_tag  
         
     def load_game_data(self):
         engine = create_engine(POSTGRE)
         self.game_table = pd.read_sql_table(table_name="game", con=engine)
         self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
         
-        train_set = pd.read_sql_table(table_name="user_train", con=engine)
-        test_set = pd.read_sql_table(table_name="user_test", con=engine)
-        self.user_table = pd.concat([train_set, test_set])
-        self.user_table = self.user_table.sort_values(by='user_idx') 
+        self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
 
     def preprocess(self):
-        print("-----------------------------------------------------------------------------")
         # input preprocess
         self.game_id = []
         for i in self.user_games_names:
@@ -195,11 +190,11 @@ class EASEModel():
         self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.game_id))
         
         similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
-        similarity_df = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
+        similarity_df_ = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
         
-        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df['item']))]
+        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df_['item']))]
         df_extracted = df_extracted.set_index('id')
-        df_extracted = df_extracted.loc[list(similarity_df['item'])]
+        df_extracted = df_extracted.loc[list(similarity_df_['item'])]
         df_extracted = df_extracted.reset_index()
 
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
