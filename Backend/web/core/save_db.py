@@ -21,14 +21,25 @@ def save_user_info(user, db: Session = Depends(get_db2)):
         
     return id
 
-def save_model_output(id, cb_dic, gpt_dic, cf_dic, db: Session = Depends(get_db2)):
+def save_model_output(id, cb_list, gpt_list, cf_list, db: Session = Depends(get_db2)):
     with get_db2() as con:
-        for output in [cb_dic, gpt_dic, cf_dic]:
+        for table, output in [("cb_model_output", cb_list), ("gpt_output", gpt_list), ("cf_model_output", cf_list)]:
             params = [bindparam("id", id), bindparam("games", output)]
-            statement = text("""insert into cb_model_output (id, games)
+            statement = text(f"""insert into {table} (id, games)
                             values (:id, :games)""")
             
             statement = statement.bindparams(*params)
             
             con.execute(statement)
+        con.commit()
+        
+def save_feedback(id, feedback):
+    with get_db2() as con:
+        params = [bindparam("id", id), bindparam("cb_model", [int(id) for id in feedback.cblike]), \
+            bindparam("gpt", [int(id) for id in feedback.gptlike]), bindparam("cf_model", [int(id) for id in feedback.cflike])]
+        statement = text("""insert into feedback (id, cb_model, gpt, cf_model)
+                         values (:id, :cb_model, :gpt, :cf_model)""")
+        
+        statement = statement.bindparams(*params)
+        con.execute(statement)
         con.commit()
