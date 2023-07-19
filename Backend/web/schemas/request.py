@@ -23,18 +23,23 @@ class UserRequest(BaseModel):
     ):
         if young:
             age = young
+        
         return cls(age=age, young=young, platform=platform, players=players, major_genre=genre, tag=tag, games=search)
     
 
 class FeedbackRequest(BaseModel):
-    like: list
+    gptlike: list
+    cblike: list
+    cflike: list
     
     @classmethod
     def as_form(
         cls,
-        like: list = Form(...)
+        gptlike: list = Form(...),
+        cblike: list = Form(...),
+        cflike: list = Form(...)
     ):
-        return cls(like=like)
+        return cls(gptlike=gptlike, cblike=cblike, cflike=cflike)
 
 
 class CBRequest(BaseModel):
