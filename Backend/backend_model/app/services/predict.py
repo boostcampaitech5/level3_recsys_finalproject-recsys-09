@@ -80,8 +80,11 @@ class ContentBaseModel():
         return user_tag
 
     def load_game_data(self):
-        self.game_table = pd.read_csv("./data/game_table.csv")
-        self.model_table = pd.read_csv("./data/cb_model_table.csv")
+        engine = create_engine(POSTGRE)
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+        # self.game_table = pd.read_csv("./data/game_table.csv")
+        # self.model_table = pd.read_csv("./data/cb_model_table.csv")
 
     def preprocess_input(self):
         print("-----------------------------------------------------------------------------")
@@ -126,69 +129,6 @@ class ContentBaseModel():
 
         return recommendations
 
-class EASE_base:
-    def __init__(self, _lambda):
-        self.B = None
-        self._lambda = _lambda
-        self.user_enc = LabelEncoder()
-        self.item_enc = LabelEncoder()
-
-    def train(self, df):
-        X = self.generate_rating_matrix(df)
-        self.X = X
-        G = X.T.dot(X).toarray() + self._lambda * np.eye(X.shape[1])  # G = X'X + λI
-        P = np.linalg.inv(G)  # P = (X'X + λI)^(-1)
-
-        B = P / -np.diag(P)  # - P_{ij} / P_{jj} if i ≠ j
-        np.fill_diagonal(B, 0)  # 대각행렬 원소를 0으로 설정
-        self.B = B
-        self.pred = X.dot(B)
-    
-    def generate_rating_matrix(self, df):
-        users = self.user_enc.fit_transform(df.loc[:, 'user'])
-        items = self.item_enc.fit_transform(df.loc[:, 'item'])
-        data = np.ones(df.shape[0])
-        return csr_matrix((data, (users, items)))
-    
-    def forward(self, df, top_k):
-        users = df['user'].unique()
-        items = df['item'].unique()
-        items = self.item_enc.transform(items)
-        train = df.loc[df.user.isin(users)]
-        train['label_user'] = self.user_enc.transform(train.user)
-        train['label_item'] = self.item_enc.transform(train.item)
-        train_groupby = train.groupby('label_user')
-
-        if -1 in users:
-            user = -1
-            group = train_groupby.get_group(self.user_enc.transform([user])[0])
-            pred = self.pred[self.user_enc.transform([user])[0], :]
-            items = items[np.isin(items, group['label_item'].unique(), invert=True)]
-            user_pred = self.predict_by_user(user, group, pred, items, top_k)
-            pred_df = user_pred
-        else:
-            pred_df = pd.DataFrame(columns=["user", "item", "score"])
-
-        pred_df['item'] = self.item_enc.inverse_transform(pred_df['item'])
-        return pred_df
-
-    @staticmethod
-    def predict_by_user(user, group, pred, items, top_k):
-        watched_item = set(group['label_item'])
-        candidates_item = [item for item in items if item not in watched_item]
-        # 안 한 게임 index를 기준으로 추출
-        pred = np.take(pred, candidates_item)
-        # 큰 순서대로 정렬하고 top_k개의 index 출력
-        res = np.argpartition(pred, -top_k)[-top_k:]
-        r = pd.DataFrame(
-            {
-                "user": [user] * len(res),
-                "item": np.take(candidates_item, res),
-                "score": np.take(pred, res),
-            }
-        ).sort_values('score', ascending=False)
-        return r
-
 class EASEModel():
     def __init__(self, user_data):
         self.user_games_names = user_data.games
@@ -199,7 +139,7 @@ class EASEModel():
         self.tag = self.tag_preprocessing(user_data.tag)
 
         self.load_game_data()
-        self.preprocess_input()
+        self.preprocess()
 
     def tag_preprocessing(self, tags):
         tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy', 'hard']
@@ -211,41 +151,55 @@ class EASEModel():
                 user_tag.append(1)
             else:
                 user_tag.append(0)
-        return user_tag        
-
+        return user_tag  
+        
     def load_game_data(self):
         engine = create_engine(POSTGRE)
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
+        
         train_set = pd.read_sql_table(table_name="user_train", con=engine)
         test_set = pd.read_sql_table(table_name="user_test", con=engine)
-        self.model_table = pd.concat([train_set, test_set])
-        self.model_table = self.model_table.sort_values(by='user_idx')
+        self.user_table = pd.concat([train_set, test_set])
+        self.user_table = self.user_table.sort_values(by='user_idx') 
 
-        self.game_table = pd.read_sql_table(table_name="game", con=engine)
-
-    def preprocess_input(self):
+    def preprocess(self):
         print("-----------------------------------------------------------------------------")
-        game_id = []
+        # input preprocess
+        self.game_id = []
         for i in self.user_games_names:
             input_idx = self.game_table[self.game_table['name'] == i]
-            game_id.append(input_idx['id'].values[0])
+            self.game_id.append(input_idx['id'].values[0])
 
-        user_df = pd.DataFrame({'user_idx': [-1] * len(self.user_games_names), 'id': game_id})
-        self.model_table = pd.concat([self.model_table, user_df])
+        # model_table preprocess
+        # user_idx로 묶어서 id를 배열로 합치기
+        self.user_table = self.user_table.groupby('user_idx')['id'].apply(list).reset_index()
+        self.user_table["id"] = self.user_table["id"].apply(lambda x: np.array(x, dtype=int))
     
     def predict(self):
-        train = self.model_table.rename(columns={'user_idx': 'user', 'id': 'item'})
-        lambda_, top = 400, 20
+        def game_similarity(arr1, arr2):
+            set1 = set(arr1)
+            set2 = set(arr2)
 
-        model = EASE_base(lambda_)
-        model.train(train)
-        predict = model.forward(train, top)
-        predict = predict.drop('score',axis = 1)
+            intersection = set1.intersection(set2)
+            similarity = len(intersection)
 
-        answer_item_idx = predict[predict['user'] == -1]['item'].values
-
-        df_extracted = self.game_table[self.game_table['id'].isin(answer_item_idx)]
+            return similarity
+        
+        def select_similar_user_idx(df):
+            if len(df) <= 3:
+                return list(df['user_idx'])
+            else:
+                return random.sample(list(df['user_idx']), 3)
+        
+        self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.game_id))
+        
+        similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
+        similarity_df = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
+        
+        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df['item']))]
         df_extracted = df_extracted.set_index('id')
-        df_extracted = df_extracted.loc[answer_item_idx]
+        df_extracted = df_extracted.loc[list(similarity_df['item'])]
         df_extracted = df_extracted.reset_index()
 
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
