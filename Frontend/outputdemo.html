@@ -115,22 +115,19 @@
 
                 <br>
                 <br>
-                설문 조사 제출까지 부탁드려요🥹
+                아래 결과 제출 버튼도 눌러주세요! 설문 조사 제출도 부탁드려요🥹
                 <br>
                 <br>
-        
-                <a href="https://forms.gle/4qAWegVuT4UuLMkE8" onclick="submitForm(event)">
+                
+                <a href="https://forms.gle/4qAWegVuT4UuLMkE8" target="_blank">
                     <img src="{{ url_for('static', path='./image/survey_button.png')}}" alt="surveybutton" width="440" height="70">
                 </a>
+
+                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/';" alt="start" width="110" height="40">
+
 
             </div>
         </form>          
         
-        <script>
-            function submitForm(event) {
-                event.preventDefault();
-                document.getElementById('feedbackForm').submit();
-            }
-        </script>
     </body>
 </html>
