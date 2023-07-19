@@ -28,8 +28,8 @@
                     }
                 </style>
                 
-                <div class="gptcontainer">
-                        
+                <div class="gptcontainer">    
+                    <h1> A model </h1>
                     {% for key, game in gpt.items() %}
                         <img src="{{game[2]}}" alt="game"> <br>
                         <h3>{{game[1]}}</h3>
@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="cbcontainer">
-                        
+                    <h1> B model </h1>
                     {% for key, game in cb_model.items() %}
                         <img src="{{game[2]}}" alt="game"> <br>
                         <h3>{{game[1]}}</h3>
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="cfcontainer">
-                        
+                    <h1> C model </h1>
                     {% for key, game in cb_model.items() %}
                         <img src="{{game[2]}}" alt="game"> <br>
                         <h3>{{game[1]}}</h3>
@@ -119,7 +119,16 @@
                 <br>
                 <br>
 
-                <input type="image" src="{{ url_for('static', path='./image/survey_button.png')}}" alt="start" width="440" height="70">
+                <a href="https://forms.gle/4qAWegVuT4UuLMkE8" onclick="submitForm(event)">
+                    <img src="{{ url_for('static', path='./image/survey_button.png')}}" alt="surveybutton" width="440" height="70">
+                </a>
+                
+                <script>
+                    function submitForm(event) {
+                        event.preventDefault();
+                        document.getElementById('feedbackForm').submit();
+                    }
+                </script>
 
             </div>
         </form>
