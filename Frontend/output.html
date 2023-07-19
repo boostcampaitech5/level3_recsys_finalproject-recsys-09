@@ -56,11 +56,23 @@
                     }
                 })
                 </script> 
-
-                home 버튼을 꼭 눌러주세요!
-                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" alt="start" width="110" height="40">
             </div>
         </form>
+        <br>
+        <br>
+        home button을 눌러주세요🥹
+        <br>
+        <br>
 
+        <a href="http://{{ ip }}:{{ port }}/main" onclick="submitForm(event)">
+            <img src="{{ url_for('static', path='./image/home_button.png')}}" alt="homebutton" width="110" height="40">
+        </a>
+
+        <script>
+            function submitForm(event) {
+                event.preventDefault();
+                document.getElementById('feedbackForm').submit();
+            }
+        </script>
     </body>
 </html>
