@@ -8,11 +8,10 @@ from core.config import MODEL_HOST, MODEL_PORT
 def get_response(model, user, api):
     input = model(**user.__dict__)
     
-    if api == "cf_model" and input.games == ['']:
+    if api == "cf_model" and not input.games:
         return []
         
     response = requests.post(f"http://{MODEL_HOST}:{MODEL_PORT}/api/{api}/predict", json=input.__dict__)
-    print(response.json())
     
     return response.json()['games']
 
@@ -49,6 +48,7 @@ def create_response(cb_model, gpt, db: Session = Depends(get_db)):
 
 
 def ab_create_response(model, name, type, db: Session = Depends(get_db)):
+    game_list = []
     game_dic = {}
     dic_len = 0
     
@@ -63,6 +63,7 @@ def ab_create_response(model, name, type, db: Session = Depends(get_db)):
                 if dic_len == 5:
                     break
                 game_dic[f'{name}{dic_len}'] = rs
+                game_list.append(rs[0])
                 dic_len += 1
     
-    return game_dic
+    return game_list, game_dic

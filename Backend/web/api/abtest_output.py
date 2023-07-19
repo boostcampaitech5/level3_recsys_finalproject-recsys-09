@@ -29,11 +29,11 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     cf_model = get_response(CBRequest, user, 'cf_model')
     
     # model server response 처리를 통한 추천 game list 생성
-    cb_dic = ab_create_response(cb_model, "cb", "id")
-    gpt_dic = ab_create_response(gpt, "gpt", "name")
-    cf_dic = ab_create_response(cf_model, "cf","id")
+    cb_list, cb_dic = ab_create_response(cb_model, "cb", "id")
+    _, gpt_dic = ab_create_response(gpt, "gpt", "name")
+    cf_list, cf_dic = ab_create_response(cf_model, "cf","id")
     
-    save_model_output(id, cb_dic, gpt_dic, cf_dic)
+    save_model_output(id, cb_list, gpt, cf_list)
     
     response = templates.TemplateResponse("outputdemo.html", ABOutputResponse(request=request, cb_model=cb_dic, gpt=gpt_dic, cf_model=cf_dic).__dict__)
     response.set_cookie(key="id", value=id)
