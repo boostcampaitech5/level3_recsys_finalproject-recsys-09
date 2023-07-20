@@ -50,10 +50,10 @@ class ContentBaseModel():
         self.user_df = pd.DataFrame(columns=columns)
 
         for i in self.user_games_names:
-            input_idx = self.game_table[self.game_table['name'] == i].index
-            input_df =  self.model_table.loc[input_idx]
+            input_idx = list(self.game_table[self.game_table['name'] == i]['id'])
+            input_df =  self.model_table[self.model_table['id'].isin(input_idx)]
             self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
-            
+
         if self.tag != -1:
             self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
 
