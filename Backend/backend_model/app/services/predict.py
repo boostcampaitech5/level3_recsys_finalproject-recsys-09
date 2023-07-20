@@ -162,17 +162,21 @@ class EASEModel():
         # input preprocess
         self.game_id = []
         self.user_games_names = [x for x in self.user_games_names if x != '']
+        print(self.user_games_names)
+        if not self.user_games_names:
+            return
         for i in self.user_games_names:
-            if i != "" or i != " ":
-                input_idx = self.game_table[self.game_table['name'] == i]
+            input_idx = self.game_table[self.game_table['name'] == i]
+            if not input_idx.empty:
                 self.game_id.append(input_idx['id'].values[0])
-
         # model_table preprocess
         # user_idx로 묶어서 id를 배열로 합치기
         self.user_table = self.user_table.groupby('user_idx')['id'].apply(list).reset_index()
         self.user_table["id"] = self.user_table["id"].apply(lambda x: np.array(x, dtype=int))
     
     def predict(self):
+        if not self.user_games_names:
+            return
         def game_similarity(arr1, arr2):
             set1 = set(arr1)
             set2 = set(arr2)
