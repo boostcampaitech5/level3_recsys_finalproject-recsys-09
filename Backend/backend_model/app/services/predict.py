@@ -98,9 +98,10 @@ class ContentBaseModel():
         self.user_df = pd.DataFrame(columns=columns)
 
         for i in self.user_games_names:
-            input_idx = list(self.game_table[self.game_table['name'] == i]['id'])
-            input_df =  self.model_table[self.model_table['id'].isin(input_idx)]
-            self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
+            if i != "" or i != " ":
+                input_idx = list(self.game_table[self.game_table['name'] == i]['id'])
+                input_df =  self.model_table[self.model_table['id'].isin(input_idx)]
+                self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
             
         if self.tag != -1:
             self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
@@ -160,9 +161,11 @@ class EASEModel():
     def preprocess(self):
         # input preprocess
         self.game_id = []
+        self.user_games_names = [x for x in self.user_games_names if x != '']
         for i in self.user_games_names:
-            input_idx = self.game_table[self.game_table['name'] == i]
-            self.game_id.append(input_idx['id'].values[0])
+            if i != "" or i != " ":
+                input_idx = self.game_table[self.game_table['name'] == i]
+                self.game_id.append(input_idx['id'].values[0])
 
         # model_table preprocess
         # user_idx로 묶어서 id를 배열로 합치기
