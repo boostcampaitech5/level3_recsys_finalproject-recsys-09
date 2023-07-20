@@ -23,4 +23,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-              mkdir test
+              docker pull heewoni/cf_model:latest
+              docker stop model
+              docker rm model
+              docker run --env-file .env -d --name model -p 8080:8080 heewoni/cf_model:latest
