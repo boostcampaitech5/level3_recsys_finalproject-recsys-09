@@ -60,7 +60,7 @@ def ab_create_response(model, name, type, db: Session = Depends(get_db)):
             result = con.execute(statement)
             
             for rs in result:
-                if dic_len == 5:
+                if dic_len == 3:
                     break
                 game_dic[f'{name}{dic_len}'] = rs
                 game_list.append(rs[0])

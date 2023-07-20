@@ -27,8 +27,8 @@ class UserRequest(BaseModel):
         if search == ['']:
             search = []
             
-        if genre == ['all']:
-            genre = []
+        if tag == ['all']:
+            tag = []
         
         return cls(age=age, young=young, platform=platform, players=players, major_genre=genre, tag=tag, games=search)
     
