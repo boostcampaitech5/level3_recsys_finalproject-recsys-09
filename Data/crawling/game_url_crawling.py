@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from MetaCriticScraper import MetaCriticScraper
+from Data.crawling.MetaCriticScraper import MetaCriticScraper
 
 
 years = [i for i in range(2000, 2023)]
