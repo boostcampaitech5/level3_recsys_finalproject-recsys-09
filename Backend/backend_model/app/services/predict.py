@@ -15,6 +15,7 @@ from multiprocessing import Pool, cpu_count
 from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
+import random
 from services.filters import filter
 
 import openai
@@ -63,9 +64,6 @@ class ContentBaseModel():
         self.major_genre = user_data.major_genre
         self.tag = self.tag_preprocessing(user_data.tag)
 
-        if self.tag[0] == -1: # tag 상관없음 처리
-            self.tag = -1
-
         self.load_game_data()
         self.preprocess_input()
         self.filtering_data()
@@ -73,6 +71,8 @@ class ContentBaseModel():
     def tag_preprocessing(self, tags):
         tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy', 'hard']
         user_tag = []
+        if len(tags) == 0:
+            return -1
         for i in tag_list:
             if i == 'hard':
                 user_tag.append(2)
@@ -80,8 +80,6 @@ class ContentBaseModel():
                 user_tag.append(1)
             else:
                 user_tag.append(0)
-        if 'all' in tags:
-            user_tag = [-1, -1, -1, -1, -1, -1, -1]
         return user_tag
 
     def load_game_data(self):
