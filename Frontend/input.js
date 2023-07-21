@@ -58,10 +58,14 @@ function easyLevelSelect() {
 //tag 상관없음 함수
 function dontCare() {
   const checkboxes = document.getElementsByName('tag');
-  
+  const dontcare = document.getElementById('none');
+
   checkboxes.forEach((checkbox) => {
     checkbox.checked = false;
   })
+
+  dontcare.checked = true;
+  
 }
 
 //tag 선택시 상관없음 항목이 체크 안되도록 하는 함수
