@@ -49,6 +49,7 @@ jobs:
           username: ${{ secrets.WEB_USERNAME }}
           key: ${{ secrets.WEB_SSH_KEY }}
           port: 22
+          envs: DOCKER_REGISTRY,IMAGE_NAME,IMAGE_TAG,CONTAINER_NAME
           script: |
               docker pull $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
               docker stop $CONTAINER_NAME
