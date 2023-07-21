@@ -3,6 +3,8 @@ import numpy as np
 import os
 import glob
 from src.precision_recall import compute_precision_recall
+import time
+from tqdm import tqdm
 
 # 사용자로부터 파일명 입력 받기
 folder_path = 'output/'  # 폴더 경로
@@ -33,7 +35,8 @@ recall_list = []
 
 print('Precision@5 & Recall@5 계산중...')
 
-for i in user_idx:
+for i in tqdm(user_idx):
+    time.sleep(0.1)
     targets = np.array(test_set[test_set['user'] == i]['item'])
     predictions = np.array(predict[predict['user'] == i]['item'])
     precision, recall = compute_precision_recall(targets, predictions, k=5)
