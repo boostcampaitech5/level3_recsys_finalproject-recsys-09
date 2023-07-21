@@ -5,7 +5,7 @@ on:
     branches:
       - feat#51 # 또는 배포하려는 브랜치
     paths:
-      - '.github/web_serving.yml'
+      - '.github/workflows/web_serving.yml'
       - 'Backend/web/**'
       - 'Frontend/**'
 
