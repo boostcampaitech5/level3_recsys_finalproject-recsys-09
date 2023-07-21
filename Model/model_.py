@@ -43,6 +43,10 @@ class ContentBaseModel():
             self.model_table = self.model_table[['id', 'genre']]
 
     def preprocess_input(self):
+        self.user_games_names = [x for x in self.user_games_names if x != '']
+        if not self.user_games_names:
+            return
+        
         if self.tag == -1:
             columns=['id', 'genre']
         else:
@@ -53,7 +57,8 @@ class ContentBaseModel():
             input_idx = list(self.game_table[self.game_table['name'] == i]['id'])
             input_df =  self.model_table[self.model_table['id'].isin(input_idx)]
             self.user_df = pd.concat([self.user_df, input_df[['id', 'genre']]], ignore_index=True)
-
+            if not self.user_df.empty:
+                return 
         if self.tag != -1:
             self.user_df = self.user_df.fillna(dict(zip(self.user_df.columns[2:], self.tag)))
 
@@ -62,6 +67,8 @@ class ContentBaseModel():
         self.model_table = self.model_table[self.model_table['id'].isin(filtered_idx)]
 
     def predict(self):
+        if not self.user_games_names:
+            return []
         combined_df = pd.concat([self.model_table, self.user_df], ignore_index=True)
         # "genre" 열의 장르들을 숫자로 매핑
         vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
@@ -99,6 +106,78 @@ class EASEModel():
         self.players = players
         self.major_genre = major_genre
         self.tag = tag
+        self.flag=0
+
+        self.load_game_data()
+        self.preprocess()
+        
+    def load_game_data(self):
+        #engine = create_engine(POSTGRE)
+        load_dotenv()
+        engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
+        self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
+
+    def preprocess(self):
+        # input preprocess
+        self.game_id = []
+        self.user_games_names = [x for x in self.user_games_names if x != '']
+        if not self.user_games_names:
+            return
+        
+        for i in self.user_games_names:
+            input_idx = self.game_table[self.game_table['name'] == i]
+            if not input_idx.empty:
+                self.game_id.append(input_idx['id'].values[0])
+            
+ 
+        # model_table preprocess
+        # user_idx로 묶어서 id를 배열로 합치기
+        self.user_table = self.user_table.groupby('user_idx')['id'].apply(list).reset_index()
+        self.user_table["id"] = self.user_table["id"].apply(lambda x: np.array(x, dtype=int))
+    
+    def predict(self):
+        def game_similarity(arr1, arr2):
+            set1 = set(arr1)
+            set2 = set(arr2)
+
+            intersection = set1.intersection(set2)
+            similarity = len(intersection)
+
+            return similarity
+        
+        def select_similar_user_idx(df):
+            if len(df) <= 3:
+                return list(df['user_idx'])
+            else:
+                return random.sample(list(df['user_idx']), 3)
+        
+        if not self.game_id:
+            return []
+        
+        self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.game_id))
+        
+        similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
+        similarity_df_ = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
+        
+        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df_['item']))]
+        df_extracted = df_extracted.set_index('id')
+        df_extracted = df_extracted.loc[list(similarity_df_['item'])]
+        df_extracted = df_extracted.reset_index()
+
+        final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
+        return list(final_id)
+
+        
+class HybridModel():
+    def __init__(self, age, platform, players, major_genre, tag, user_games_names):
+        self.user_games_names = list(user_games_names)
+        self.age = age
+        self.platform = platform
+        self.players = players
+        self.major_genre = major_genre
+        self.tag = tag
 
         self.load_game_data()
         self.preprocess()
@@ -122,6 +201,9 @@ class EASEModel():
         # user_idx로 묶어서 id를 배열로 합치기
         self.user_table = self.user_table.groupby('user_idx')['id'].apply(list).reset_index()
         self.user_table["id"] = self.user_table["id"].apply(lambda x: np.array(x, dtype=int))
+
+        cb_model = ContentBaseModel(self.age, self.platform, self.players, self.major_genre, self.tag, self.user_games_names) 
+        self.side_imfo = cb_model.predict()
     
     def predict(self):
         def game_similarity(arr1, arr2):
@@ -140,8 +222,10 @@ class EASEModel():
                 return random.sample(list(df['user_idx']), 3)
         
         self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.game_id))
+        self.user_table['similarity_sub'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.side_imfo))
         
         similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
+        similarity_df = similarity_df[similarity_df['similarity_sub'] == max(similarity_df['similarity_sub'])]
         similarity_df_ = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
         
         df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df_['item']))]
@@ -151,6 +235,3 @@ class EASEModel():
 
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
         return list(final_id)
-
-        
-
