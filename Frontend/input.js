@@ -57,7 +57,7 @@ function easyLevelSelect() {
 
 //tag 상관없음 함수
 function dontCare() {
-  const checkboxes = document.getElementsByClassName('tag');
+  const checkboxes = document.getElementsByName('tag');
   
   checkboxes.forEach((checkbox) => {
     checkbox.checked = false;
