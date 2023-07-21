@@ -51,8 +51,8 @@ jobs:
           port: 22
           envs: DOCKER_REGISTRY,IMAGE_NAME,IMAGE_TAG,CONTAINER_NAME
           script: |
-              docker pull $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-              docker stop $CONTAINER_NAME
-              docker rm $CONTAINER_NAME
-              docker rmi $(docker images -f "dangling=true" -q)
-              docker run --env-file .env -d --name $CONTAINER_NAME -p 8080:8080 $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+              sudo docker pull $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+              sudo docker stop $CONTAINER_NAME
+              sudo docker rm $CONTAINER_NAME
+              sudo docker rmi $(docker images -f "dangling=true" -q)
+              sudo docker run --env-file .env -d --name $CONTAINER_NAME -p 8080:8080 $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
