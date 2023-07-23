@@ -87,11 +87,11 @@ class ContentBaseModel():
         return user_tag
 
     def load_game_data(self):
-        # engine = create_engine(POSTGRE)
-        # self.game_table = pd.read_sql_table(table_name="game", con=engine)
-        # self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
-        self.game_table = redis_client.get('game')
-        self.model_table = redis_client.get('cb_model')
+        engine = create_engine(POSTGRE)
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+        # self.game_table = redis_client.get('game')
+        # self.model_table = redis_client.get('cb_model')
         
         if self.tag == -1:
             self.model_table = self.model_table[['id', 'genre']]
@@ -158,14 +158,14 @@ class EASEModel():
         self.preprocess()
         
     def load_game_data(self):
-        # engine = create_engine(POSTGRE)
-        # self.game_table = pd.read_sql_table(table_name="game", con=engine)
-        # self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
-        # self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
+        engine = create_engine(POSTGRE)
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
+        self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
 
-        self.game_table = redis_client.get('game')
-        self.model_table = redis_client.get('Ease')
-        self.user_table = redis_client.get('cf_model')
+        # self.game_table = redis_client.get('game')
+        # self.model_table = redis_client.get('Ease')
+        # self.user_table = redis_client.get('cf_model')
 
     def preprocess(self):
         # input preprocess
