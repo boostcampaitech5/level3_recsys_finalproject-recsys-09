@@ -3,7 +3,7 @@ import os
 from loguru import logger
 
 from core.errors import PredictException, ModelLoadException
-from core.config import MODEL_NAME, MODEL_PATH, POSTGRE, API_KEY
+from core.config import MODEL_NAME, MODEL_PATH, POSTGRE, API_KEY, MODEL_IP, REDIS_PORT
 
 # model
 from sklearn.feature_extraction.text import CountVectorizer
@@ -17,6 +17,10 @@ import pandas as pd
 import numpy as np
 import random
 from services.filters import filter
+from direct_redis import DirectRedis
+
+redis_client = DirectRedis(host=MODEL_IP, port=REDIS_PORT)
+# redis_client = DirectRedis(host="localhost", port=REDIS_PORT)
 
 import openai
 
@@ -83,9 +87,11 @@ class ContentBaseModel():
         return user_tag
 
     def load_game_data(self):
-        engine = create_engine(POSTGRE)
-        self.game_table = pd.read_sql_table(table_name="game", con=engine)
-        self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+        # engine = create_engine(POSTGRE)
+        # self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        # self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+        self.game_table = redis_client.get('game')
+        self.model_table = redis_client.get('cb_model')
         
         if self.tag == -1:
             self.model_table = self.model_table[['id', 'genre']]
@@ -152,11 +158,14 @@ class EASEModel():
         self.preprocess()
         
     def load_game_data(self):
-        engine = create_engine(POSTGRE)
-        self.game_table = pd.read_sql_table(table_name="game", con=engine)
-        self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
-        
-        self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
+        # engine = create_engine(POSTGRE)
+        # self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        # self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
+        # self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
+
+        self.game_table = redis_client.get('game')
+        self.model_table = redis_client.get('Ease')
+        self.user_table = redis_client.get('cf_model')
 
     def preprocess(self):
         # input preprocess
