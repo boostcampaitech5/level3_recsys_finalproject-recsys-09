@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from api.home import home_router
 from api.input import input_router
-from api.output import output_router
+from api.abtest_output import output_router
 from core.preload import preload
 
 

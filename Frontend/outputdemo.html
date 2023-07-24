@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> GameP!ck </title>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
+        <link rel="stylesheet" href="{{ url_for('static', path='/outputdemo.css')}}">
+    </head>
+    <body style="background-color:rgb(255, 245, 230)">
+        <form method="post" action = "http://{{ ip }}:{{ port }}/home"  id="feedbackForm">
+            <div class="container">
+
+                <style>
+                    .btn-like {
+                        color: transparent;
+                        text-shadow: 0 0 2px rgba(255,255,255,.7), 0 0 0 #000;
+                    }
+                    .btn-like:hover {
+                        text-shadow: 0 0 0 #ea0;
+                    }
+                    .btn-like.done {
+                        color: inherit;
+                        text-shadow: 0;
+                    }
+                    .btn-like.done:hover {
+                        color: transparent;
+                        text-shadow: 0 0 0 #777;
+                    }
+                </style>
+                
+                <div class="gptcontainer">    
+                    <h1> A model </h1>
+                    {% for key, game in gpt.items() %}
+                        <img src="{{game[2]}}" alt="game"> <br>
+                        <h3>{{game[1]}}</h3>
+                        <h4> platforms : {{game[3]}}</h4>
+                    
+                        추천 결과가 마음에 드시나요?
+
+                        <button type="button" name="{{key}}" class="btn-like">👍</button>
+                        <input type="hidden" id="{{key}}" name="gptdislike" value="{{game[0]}}">
+
+                        <br>
+                        <br>
+                        <br>
+                    {% endfor %}
+
+                </div>
+
+                <div class="cbcontainer">
+                    <h1> B model </h1>
+                    {% for key, game in cb_model.items() %}
+                        <img src="{{game[2]}}" alt="game"> <br>
+                        <h3>{{game[1]}}</h3>
+                        <h4> platforms : {{game[3]}}</h4>
+                    
+                        추천 결과가 마음에 드시나요?
+
+                        <button type="button" name="{{key}}" class="btn-like">👍</button>
+                        <input type="hidden" id="{{key}}" name="cbdislike" value="{{game[0]}}">
+
+                        <br>
+                        <br>
+                        <br>
+                    {% endfor %}
+
+                </div>
+
+                <div class="cfcontainer">
+                    <h1> C model </h1>
+                    {% for key, game in cf_model.items() %}
+                        <img src="{{game[2]}}" alt="game"> <br>
+                        <h3>{{game[1]}}</h3>
+                        <h4> platforms : {{game[3]}}</h4>
+                    
+                        추천 결과가 마음에 드시나요?
+
+                        <button type="button" name="{{key}}" class="btn-like">👍</button>
+                        <input type="hidden" id="{{key}}" name="cfdislike" value="{{game[0]}}">
+
+                        <br>
+                        <br>
+                        <br>
+                    {% endfor %}
+
+                </div>
+                                    
+                <script src="https://code.jquery.com/jquery.min.js"></script>
+                <script>
+                $(".btn-like").click(function() {
+                    $(this).toggleClass("done");
+
+                    var id = $(this).attr("name");
+
+                    if ($("#" + id).attr("name") === "gptdislike") {
+                        $("#" + id).attr("name", "gptlike");
+                    }
+                    else if ($("#" + id).attr("name") === "gptlike"){
+                        $("#" + id).attr("name", "gptdislike");
+                    }
+                    else if ($("#" + id).attr("name") === "cbdislike"){
+                        $("#" + id).attr("name", "cblike");
+                    }
+                    else if ($("#" + id).attr("name") === "cblike"){
+                        $("#" + id).attr("name", "cbdislike");
+                    }
+                    else if ($("#" + id).attr("name") === "cfdislike"){
+                        $("#" + id).attr("name", "cflike");
+                    }
+                    else if ($("#" + id).attr("name") === "cflike"){
+                        $("#" + id).attr("name", "cfdislike");
+                    }
+                })
+                </script> 
+
+                <br>
+                <br>
+                1. 아래 설문 조사 버튼을 눌러 설문을 해주세요 🥹
+                2. 설문이 완료되면 옆의 홈 버튼도 꼭 눌러주세요! 🥹
+                <br>
+                <br>
+                
+                <a href="https://forms.gle/4qAWegVuT4UuLMkE8" target="_blank">
+                    <img src="{{ url_for('static', path='./image/survey_button.png')}}" alt="surveybutton" width="440" height="70">
+                </a>
+
+                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/';" alt="start" width="110" height="40">
+
+
+            </div>
+        </form>          
+        
+    </body>
+</html>

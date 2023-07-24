@@ -23,8 +23,30 @@ class UserRequest(BaseModel):
     ):
         if young:
             age = young
+        
+        if search == ['']:
+            search = []
+            
+        if tag == ['all']:
+            tag = []
+        
         return cls(age=age, young=young, platform=platform, players=players, major_genre=genre, tag=tag, games=search)
     
+
+class FeedbackRequest(BaseModel):
+    gptlike: list
+    cblike: list
+    cflike: list
+    
+    @classmethod
+    def as_form(
+        cls,
+        gptlike: list = Form(...),
+        cblike: list = Form(...),
+        cflike: list = Form(...)
+    ):
+        return cls(gptlike=gptlike, cblike=cblike, cflike=cflike)
+
 
 class CBRequest(BaseModel):
     age: str

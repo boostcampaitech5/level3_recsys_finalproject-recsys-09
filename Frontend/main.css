@@ -1,7 +1,9 @@
 .container {
     margin: 0 auto;
     width: 375px;
-    height: 667px;
+    height: 100vh;
     text-align: center;
     background-color: white;
+    border-left: 30px solid rgb(226, 112, 60);
+    border-right: 30px solid rgb(226, 112, 60);
 }

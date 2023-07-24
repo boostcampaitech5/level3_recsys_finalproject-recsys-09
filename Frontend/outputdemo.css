@@ -1,0 +1,35 @@
+.container {
+    margin: 0 auto;
+    width: 1000px;
+    text-align: center;
+    background-color: white;
+}
+
+.gptcontainer {
+    display: inline-block;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    border-right: 10px solid black;
+    vertical-align: top;
+}
+
+.cbcontainer {
+    display: inline-block;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align: top;
+}
+
+.cfcontainer {
+    display: inline-block;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    border-left: 10px solid black;
+    vertical-align: top;
+}

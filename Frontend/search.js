@@ -15,7 +15,7 @@ function makeAutocomplete() {
       const value = search.value.trim().toLowerCase();
       // 자동완성 필터링
       const matchDataList = value
-        ? dataList.filter((label) => label.includes(value))
+        ? dataList.filter((label) => label.toLowerCase().includes(value))
         : [];
   
       switch (event.keyCode) {
@@ -54,7 +54,7 @@ function makeAutocomplete() {
 
 const showList = (data, value, nowIndex) => {
   // 정규식으로 변환
-  const regex = new RegExp(`(${value})`, "g");
+  const regex = new RegExp(`(${value})`, "gi");
   
   $autoComplete.innerHTML = data
     .map(

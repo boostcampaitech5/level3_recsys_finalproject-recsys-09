@@ -17,3 +17,9 @@ class InputResponse(BaseResponse):
 
 class OutputResponse(BaseResponse):
     games: dict
+    
+
+class ABOutputResponse(BaseResponse):
+    gpt: dict
+    cb_model: dict
+    cf_model: dict
