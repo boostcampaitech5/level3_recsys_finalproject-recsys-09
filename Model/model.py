@@ -296,8 +296,6 @@ class Most_popular_filter():
         engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
         self.game_table = pd.read_sql_table(table_name="game", con=engine)
         self.details_table = pd.read_sql_table(table_name="details", con=engine)
-        if self.tag == -1:
-            self.model_table = self.model_table[['id', 'genre']]
 
     def preprocess_input(self):
         # 필터링
