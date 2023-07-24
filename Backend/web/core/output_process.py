@@ -22,20 +22,25 @@ def create_response(cb_model, gpt, db: Session = Depends(get_db)):
     
     with get_db() as con:
         for title in gpt:
-            title_param = bindparam("title", title)
-            
-            statement = text("select name, img_url, platform from game where name=:title")
-            statement = statement.bindparams(title_param)
+            param = bindparam("title", title.replace(' ', ''))
+            statement = text("""select a.id, a.name, b.url, a.img_url, a.platform 
+                             from (select id, name, img_url, platform from game where REPLACE(name, ' ',  '') ilike :title) a
+                             inner join details b
+                             on a.id = b.id""")
+            statement = statement.bindparams(param)
             gpt_result = con.execute(statement)
             
             for rs in gpt_result:
-                if dic_len == 4:
+                if dic_len == 3:
                     break
                 game_dic[dic_len] = rs
                 dic_len += 1
         
         for id in cb_model:
-            statement = text(f"select id, name, img_url, platform from game where id={id}")
+            statement = text(f"""select a.id, a.name, b.url, a.img_url, a.platform 
+                             from (select id, name, img_url, platform from game where id={id}) a
+                             inner join details b
+                             on a.id = b.id""")
             cb_result = con.execute(statement)
             
             for rs in cb_result:
