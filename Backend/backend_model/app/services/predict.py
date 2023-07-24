@@ -188,11 +188,11 @@ class EASEModel():
             redis_client.set('Ease', Ease_table)
         self.model_table = redis_client.get('Ease')
 
-        if 'cf_table' not in redis_client: 
+        if 'cf_model' not in redis_client: 
             engine = create_engine(POSTGRE)
-            cf_table = pd.read_sql_table(table_name="cf_table", con=engine)
-            redis_client.set('cf_table', cf_table)
-        self.user_table = redis_client.get('cf_table')
+            cf_table = pd.read_sql_table(table_name="cf_model", con=engine)
+            redis_client.set('cf_model', cf_table)
+        self.user_table = redis_client.get('cf_model')
 
     def preprocess(self):
         # input preprocess
