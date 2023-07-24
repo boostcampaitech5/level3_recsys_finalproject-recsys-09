@@ -177,10 +177,11 @@ class HybridModel():
         self.platform = platform
         self.players = players
         self.major_genre = major_genre
-        self.tag = tag
+        self.tag = -1 if tag[0] == -1 else tag # tag 상관없음 처리
 
-        self.load_game_data()
-        self.preprocess()
+        if self.user_games_id:
+            self.load_game_data()
+            self.preprocess()
         
     def load_game_data(self):
         #engine = create_engine(POSTGRE)
@@ -198,13 +199,17 @@ class HybridModel():
         self.cf_table["id"] = self.cf_table["id"].apply(lambda x: np.array(x, dtype=int))
 
         # user game log preprocess
-        self.df_user = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
+        if self.tag == -1:
+            columns=['id', 'genre']
+        else:
+            columns = ['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty']
+        self.df_user = pd.DataFrame(columns=columns)
 
         for i in self.user_games_id:
             input_df =  self.cb_table[self.cb_table['id']== i]
             self.df_user = pd.concat([self.df_user, input_df[['id', 'genre']]], ignore_index=True)
-
-        self.df_user = self.df_user.fillna(dict(zip(self.df_user.columns[2:], self.tag)))
+        if self.tag != -1:
+            self.df_user = self.df_user.fillna(dict(zip(self.df_user.columns[2:], self.tag)))
 
     def cf_predict(self):
         def game_similarity(arr1, arr2):
@@ -271,6 +276,9 @@ class HybridModel():
         self.recommendations = self.final_df.loc[similar_item_ids, 'id'].tolist()
 
     def predict(self):
+        if not self.user_games_id:
+            return []
+        
         self.cf_predict()
         self.cb_predict()
 
