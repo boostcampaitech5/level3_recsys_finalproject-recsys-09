@@ -16,7 +16,7 @@ def search_games_model(games, db: Session = Depends(get_db)):
                 result = con.execute(statement)
                 
                 for rs in result:
-                    filter_games.append(rs[1])
+                    filter_games.append(rs[0])
                     
     return filter_games
 
