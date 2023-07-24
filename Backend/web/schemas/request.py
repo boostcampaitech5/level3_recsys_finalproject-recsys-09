@@ -49,7 +49,7 @@ class FeedbackRequest(BaseModel):
         return cls(gptlike=gptlike, cblike=cblike, cflike=cflike)
 
 
-class CBRequest(BaseModel):
+class ModelRequest(BaseModel):
     age: str
     platform: list
     players: str
