@@ -171,8 +171,8 @@ class EASEModel():
 
         
 class HybridModel():
-    def __init__(self, age, platform, players, major_genre, tag, user_games_names):
-        self.user_games_names = list(user_games_names)
+    def __init__(self, age, platform, players, major_genre, tag, user_games_id):
+        self.user_games_id = list(user_games_id)
         self.age = age
         self.platform = platform
         self.players = players
@@ -188,24 +188,25 @@ class HybridModel():
         engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
         self.game_table = pd.read_sql_table(table_name="game", con=engine)
         self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
-        self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
-
+        self.cf_table = pd.read_sql_table(table_name="cf_model", con=engine)
+        self.cb_table = pd.read_sql_table(table_name="cb_model", con=engine)
+        
     def preprocess(self):
-        # input preprocess
-        self.game_id = []
-        for i in self.user_games_names:
-            input_idx = self.game_table[self.game_table['name'] == i]
-            self.game_id.append(input_idx['id'].values[0])
-
         # model_table preprocess
         # user_idx로 묶어서 id를 배열로 합치기
-        self.user_table = self.user_table.groupby('user_idx')['id'].apply(list).reset_index()
-        self.user_table["id"] = self.user_table["id"].apply(lambda x: np.array(x, dtype=int))
+        self.cf_table = self.cf_table.groupby('user_idx')['id'].apply(list).reset_index()
+        self.cf_table["id"] = self.cf_table["id"].apply(lambda x: np.array(x, dtype=int))
 
-        cb_model = ContentBaseModel(self.age, self.platform, self.players, self.major_genre, self.tag, self.user_games_names) 
-        self.side_imfo = cb_model.predict()
-    
-    def predict(self):
+        # user game log preprocess
+        self.df_user = pd.DataFrame(columns=['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty'])
+
+        for i in self.user_games_id:
+            input_df =  self.cb_table[self.cb_table['id']== i]
+            self.df_user = pd.concat([self.df_user, input_df[['id', 'genre']]], ignore_index=True)
+
+        self.df_user = self.df_user.fillna(dict(zip(self.df_user.columns[2:], self.tag)))
+
+    def cf_predict(self):
         def game_similarity(arr1, arr2):
             set1 = set(arr1)
             set2 = set(arr2)
@@ -215,23 +216,62 @@ class HybridModel():
 
             return similarity
         
-        def select_similar_user_idx(df):
-            if len(df) <= 3:
-                return list(df['user_idx'])
-            else:
-                return random.sample(list(df['user_idx']), 3)
+        def select_similar_user(df):
+            if len(df) > 3:
+                df['id'] = df['id'].apply(lambda x: x[:5])
+            return df
         
-        self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.game_id))
-        self.user_table['similarity_sub'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.side_imfo))
-        
-        similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
-        similarity_df = similarity_df[similarity_df['similarity_sub'] == max(similarity_df['similarity_sub'])]
-        similarity_df_ = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
-        
-        df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df_['item']))]
-        df_extracted = df_extracted.set_index('id')
-        df_extracted = df_extracted.loc[list(similarity_df_['item'])]
-        df_extracted = df_extracted.reset_index()
+        self.cf_table['similarity'] = self.cf_table['id'].apply(lambda x: game_similarity(x, self.user_games_id))
 
-        final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
-        return list(final_id)
+        similarity_df = self.cf_table[self.cf_table['similarity'] == max(self.cf_table['similarity'])]
+        similarity_df = select_similar_user(similarity_df)
+
+        ease_predict = self.model_table[self.model_table['user'].isin(list(similarity_df['user_idx']))]
+
+        self.combined_ids = similarity_df['id'].explode().tolist()
+        self.combined_ids = self.combined_ids + list(ease_predict['item'])
+
+    def cb_predict(self):
+        # 사전에 입력받은 유저정보로 필터링
+        idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
+        filtered_df = self.cb_table[self.cb_table['id'].isin(self.combined_ids)]
+        filtered_df = filtered_df[filtered_df['id'].isin(idx)]
+
+        # 유사도 계산 시작 
+        self.final_df = pd.concat([filtered_df, self.df_user], ignore_index=True)
+
+        # 'id' 중복 제거, 중복이 있다면 뒤에 것을 남김
+        self.final_df = self.final_df.drop_duplicates(subset='id', keep='last')
+
+        # "genre" 열의 장르들을 숫자로 매핑
+        vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
+        genre_matrix = vectorizer.fit_transform(self.final_df['genre'])
+        genre_df = pd.DataFrame(genre_matrix.toarray())
+
+        # "id" 열 제외
+        df_numeric = self.final_df.drop(['id', 'genre'], axis=1)
+
+        # 숫자 데이터와 장르 데이터 결합
+        df_combined = pd.concat([df_numeric, genre_df], axis=1)
+
+        # 코사인 유사도 계산
+        similarity_matrix = cosine_similarity(df_combined)
+
+        # 유사도 행렬을 데이터프레임으로 변환
+        similarity_df = pd.DataFrame(similarity_matrix, index=self.final_df.index, columns=self.final_df.index)
+
+        # 상위 5개 유사한 항목 찾기
+        item_id = 0  # 기준 항목의 인덱스
+        similar_items = similarity_df[item_id].nlargest(len(self.df_user) + 5)[len(self.df_user):]  # 상위 5개 유사한 항목 (자기 자신 제외)
+
+        # 상위 5개 유사한 항목의 인덱스
+        similar_item_ids = similar_items.index.tolist()
+
+        # 추천 게임 목록 생성
+        self.recommendations = self.final_df.loc[similar_item_ids, 'id'].tolist()
+
+    def predict(self):
+        self.cf_predict()
+        self.cb_predict()
+
+        return self.recommendations
