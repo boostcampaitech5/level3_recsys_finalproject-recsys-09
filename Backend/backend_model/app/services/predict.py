@@ -241,6 +241,184 @@ class EASEModel():
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
         return list(final_id)
 
+class HybridModel():
+    def __init__(self, user_data):
+        self.user_games_id = user_data.games
+        self.age = int(user_data.age)
+        self.platform = user_data.platform
+        self.players = int(user_data.players)
+        self.major_genre = user_data.major_genre
+        self.tag = self.tag_preprocessing(user_data.tag)
+
+        self.load_game_data()
+        self.preprocess()
+    
+    def tag_preprocessing(self, tags):
+        tag_list = ['Graphics', 'Sound', 'Creativity', 'Freedom', 'Hitting', 'Completion', 'easy', 'hard']
+        user_tag = []
+        if len(tags) == 0:
+            return -1
+        for i in tag_list:
+            if i == 'hard':
+                user_tag.append(2)
+            elif i in tags:
+                user_tag.append(1)
+            else:
+                user_tag.append(0)
+        return user_tag
+        
+    def load_game_data(self):
+        if 'game' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            game_table = pd.read_sql_table(table_name="game", con=engine)
+            redis_client.set('game', game_table)
+        self.game_table = redis_client.get('game')
+
+        if 'cb_model' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            cb_model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+            redis_client.set('cb_model', cb_model_table)
+        self.cb_table = redis_client.get('cb_model')
+
+        if 'Ease' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            Ease_table = pd.read_sql_table(table_name="Ease", con=engine)
+            redis_client.set('Ease', Ease_table)
+        self.model_table = redis_client.get('Ease')
+
+        if 'cf_model' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            cf_table = pd.read_sql_table(table_name="cf_model", con=engine)
+            redis_client.set('cf_model', cf_table)
+        self.cf_table = redis_client.get('cf_model')
+        
+    def preprocess(self):
+        # model_table preprocess
+        # user_idx로 묶어서 id를 배열로 합치기
+        self.cf_table = self.cf_table.groupby('user_idx')['id'].apply(list).reset_index()
+        self.cf_table["id"] = self.cf_table["id"].apply(lambda x: np.array(x, dtype=int))
+
+        # user game log preprocess
+        if self.tag == -1:
+            columns=['id', 'genre']
+        else:
+            columns = ['id', 'genre', 'graphics', 'sound', 'creativity', 'freedom', 'hitting', 'completion', 'difficulty']
+        self.df_user = pd.DataFrame(columns=columns)
+
+        for i in self.user_games_id:
+            input_df =  self.cb_table[self.cb_table['id']== i]
+            self.df_user = pd.concat([self.df_user, input_df[['id', 'genre']]], ignore_index=True)
+        if self.tag != -1:
+            self.df_user = self.df_user.fillna(dict(zip(self.df_user.columns[2:], self.tag)))
+
+    def cf_predict(self):
+        def game_similarity(arr1, arr2):
+            set1 = set(arr1)
+            set2 = set(arr2)
+
+            intersection = set1.intersection(set2)
+            similarity = len(intersection)
+
+            return similarity
+        
+        def select_similar_user(df):
+            if len(df) > 3:
+                df.loc[:, 'id'] = df['id'].apply(lambda x: x[:5])
+            return df
+        
+        self.cf_table['similarity'] = self.cf_table['id'].apply(lambda x: game_similarity(x, self.user_games_id))
+
+        similarity_df = self.cf_table[self.cf_table['similarity'] == max(self.cf_table['similarity'])]
+        similarity_df = select_similar_user(similarity_df)
+
+        ease_predict = self.model_table[self.model_table['user'].isin(list(similarity_df['user_idx']))]
+
+        self.combined_ids = similarity_df['id'].explode().tolist()
+        self.combined_ids = self.combined_ids + list(ease_predict['item'])
+
+    def cb_predict(self):
+        # 사전에 입력받은 유저정보로 필터링
+        idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
+        filtered_df = self.cb_table[self.cb_table['id'].isin(self.combined_ids)]
+        filtered_df = filtered_df[filtered_df['id'].isin(idx)]
+
+        # 유사도 계산 시작 
+        self.final_df = pd.concat([filtered_df, self.df_user], ignore_index=True)
+
+        # 'id' 중복 제거, 중복이 있다면 뒤에 것을 남김
+        self.final_df = self.final_df.drop_duplicates(subset='id', keep='last')
+
+        # "genre" 열의 장르들을 숫자로 매핑
+        vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
+        genre_matrix = vectorizer.fit_transform(self.final_df['genre'])
+        genre_df = pd.DataFrame(genre_matrix.toarray())
+
+        # "id" 열 제외
+        df_numeric = self.final_df.drop(['id', 'genre'], axis=1)
+
+        # 숫자 데이터와 장르 데이터 결합
+        if self.tag == -1:
+            df_combined = genre_df
+        else: df_combined = pd.concat([df_numeric, genre_df], axis=1)
+
+        # 코사인 유사도 계산
+        similarity_matrix = cosine_similarity(df_combined)
+
+        # 유사도 행렬을 데이터프레임으로 변환
+        similarity_df = pd.DataFrame(similarity_matrix, index=self.final_df.index, columns=self.final_df.index)
+
+        # 상위 5개 유사한 항목 찾기
+        item_id = 0  # 기준 항목의 인덱스
+        similar_items = similarity_df[item_id].nlargest(len(self.df_user) + 5)[len(self.df_user):]  # 상위 5개 유사한 항목 (자기 자신 제외)
+
+        # 상위 5개 유사한 항목의 인덱스
+        similar_item_ids = similar_items.index.tolist()
+
+        # 추천 게임 목록 생성
+        self.recommendations = self.final_df.loc[similar_item_ids, 'id'].tolist()
+
+    def predict(self):
+        if not self.user_games_id:
+            return []
+        
+        self.cf_predict()
+        self.cb_predict()
+
+        return self.recommendations
+
+class Most_popular_filter():
+    def __init__(self, user_data):
+        self.age = int(user_data.age)
+        self.platform = user_data.platform
+        self.players = int(user_data.players)
+        self.major_genre = user_data.major_genre
+
+        self.load_game_data()
+        self.preprocess_input()
+        
+    def load_game_data(self):
+        if 'game' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            game_table = pd.read_sql_table(table_name="game", con=engine)
+            redis_client.set('game', game_table)
+        self.game_table = redis_client.get('game')
+
+        if 'details' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            details_table = pd.read_sql_table(table_name="details", con=engine)
+            redis_client.set('details', details_table)
+        self.details_table = redis_client.get('details')
+
+    def preprocess_input(self):
+        # 필터링
+        self.idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
+
+    def predict(self):
+        self.details_table = self.details_table[self.details_table['id'].isin(self.idx)]
+        self.details_table = self.details_table.sort_values(by="critic_score", ascending=False)
+
+        return list(self.details_table.head(5)['id'])
+
 def chatGPT(user_data):
     # set api key
     openai.api_key = API_KEY 

@@ -24,3 +24,6 @@ def redis_use():
     redis_client.set('cb_model', cb_model_table)
     redis_client.set('Ease', Ease_table)
     redis_client.set('cf_model', cf_table)
+
+    details_table = pd.read_sql_table(table_name="details", con=engine)
+    redis_client.set('details', details_table)
