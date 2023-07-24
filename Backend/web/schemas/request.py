@@ -1,7 +1,7 @@
 from fastapi import Form
 from pydantic import BaseModel, validator
 from typing import Optional
-from core.output_process import search_games
+from core.input_process import search_games_model, search_games_gpt
 
 class UserRequest(BaseModel):
     age: str
@@ -59,7 +59,7 @@ class CBRequest(BaseModel):
     
     @validator('games')
     def process_game_iput(cls, games):
-        return search_games(games)
+        return search_games_model(games)
         
     
 class GPTRequest(BaseModel):
@@ -67,3 +67,7 @@ class GPTRequest(BaseModel):
     platform: list
     players: str
     games: list
+    
+    @validator('games')
+    def process_game_iput(cls, games):
+        return search_games_gpt(games)
