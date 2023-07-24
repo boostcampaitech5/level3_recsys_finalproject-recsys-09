@@ -1,6 +1,7 @@
 from fastapi import Form
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional
+from core.output_process import search_games
 
 class UserRequest(BaseModel):
     age: str
@@ -24,13 +25,13 @@ class UserRequest(BaseModel):
         if young:
             age = young
         
-        if search == ['']:
-            search = []
-            
+        return cls(age=age, platform=platform, players=players, major_genre=genre, tag=tag, games=search)
+    
+    @validator('tag')
+    def process_all_tag(cls, tag):
         if tag == ['all']:
-            tag = []
-        
-        return cls(age=age, young=young, platform=platform, players=players, major_genre=genre, tag=tag, games=search)
+           return []
+        return tag
     
 
 class FeedbackRequest(BaseModel):
@@ -56,7 +57,11 @@ class CBRequest(BaseModel):
     tag: list
     games: list
     
-
+    @validator('games')
+    def process_game_iput(cls, games):
+        return search_games(games)
+        
+    
 class GPTRequest(BaseModel):
     age: str
     platform: list

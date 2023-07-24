@@ -67,3 +67,20 @@ def ab_create_response(model, name, type, db: Session = Depends(get_db)):
                 dic_len += 1
     
     return game_list, game_dic
+
+
+def search_games(games, db: Session = Depends(get_db)):
+    filter_games = []
+    
+    with get_db() as con:
+            for game in games:
+                param = bindparam("game", game.replace(' ', ''))
+                statement = text("""select id, name from game where REPLACE(name, ' ',  '')
+                                 ilike :game""")
+                statement = statement.bindparams(param)
+                result = con.execute(statement)
+                
+                for rs in result:
+                    filter_games.append(rs[1])
+                    
+    return filter_games
