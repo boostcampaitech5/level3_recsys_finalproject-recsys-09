@@ -90,9 +90,19 @@ class ContentBaseModel():
         # engine = create_engine(POSTGRE)
         # self.game_table = pd.read_sql_table(table_name="game", con=engine)
         # self.model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+
+        if 'game' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            game_table = pd.read_sql_table(table_name="game", con=engine)
+            redis_client.set('game', game_table)
         self.game_table = redis_client.get('game')
+
+        if 'cb_model' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            cb_model_table = pd.read_sql_table(table_name="cb_model", con=engine)
+            redis_client.set('cb_model', cb_model_table)
         self.model_table = redis_client.get('cb_model')
-        
+            
         if self.tag == -1:
             self.model_table = self.model_table[['id', 'genre']]
 
@@ -163,9 +173,26 @@ class EASEModel():
         # self.model_table = pd.read_sql_table(table_name="Ease", con=engine)
         # self.user_table = pd.read_sql_table(table_name="cf_model", con=engine)
 
+        # self.game_table = redis_client.get('game')
+        # self.model_table = redis_client.get('Ease')
+        # self.user_table = redis_client.get('cf_model')
+        if 'game' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            game_table = pd.read_sql_table(table_name="game", con=engine)
+            redis_client.set('game', game_table)
         self.game_table = redis_client.get('game')
+
+        if 'Ease' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            Ease_table = pd.read_sql_table(table_name="Ease", con=engine)
+            redis_client.set('Ease', Ease_table)
         self.model_table = redis_client.get('Ease')
-        self.user_table = redis_client.get('cf_model')
+
+        if 'cf_table' not in redis_client: 
+            engine = create_engine(POSTGRE)
+            cf_table = pd.read_sql_table(table_name="cf_table", con=engine)
+            redis_client.set('cf_table', cf_table)
+        self.user_table = redis_client.get('cf_table')
 
     def preprocess(self):
         # input preprocess
