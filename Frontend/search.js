@@ -2,52 +2,35 @@
 const $autoComplete = document.querySelector(".autocomplete");
 
 var $search = document.getElementsByName("search");
-//const $search = document.querySelectorAll("input[name=search]");
 
 $search.forEach(search => search.addEventListener('input', makeAutocomplete));
 
 function makeAutocomplete() {
-  $search.forEach(function(search){
-    let nowIndex = 0;
-  
-    search.onkeyup = (event) => {
-      // 검색어
+  $search.forEach((search) => {
+    search.addEventListener("input", (event) => {
       const value = search.value.trim().toLowerCase();
-      // 자동완성 필터링
       const matchDataList = value
         ? dataList.filter((label) => label.toLowerCase().includes(value))
         : [];
   
-      switch (event.keyCode) {
-        // UP KEY
-        case 38:
-          nowIndex = Math.max(nowIndex - 1, 0);
-          break;
+      showList(matchDataList, value);
+    });
+  });  
   
-        // DOWN KEY
-        case 40:
-          nowIndex = Math.min(nowIndex + 1, matchDataList.length - 1);
-          break;
-  
-        // ENTER KEY
-        case 13:
-          search.value = matchDataList[nowIndex] || "";
-  
-          // 초기화
-          nowIndex = 0;
-          matchDataList.length = 0;
-          break;
-          
-        // 그외 다시 초기화
-        default:
-          nowIndex = 0;
-          break;
-      }
-  
-      // 리스트 보여주기
-      showList(matchDataList, value, nowIndex);
-    };
-  })
+  $autoComplete.addEventListener("click", (event) => {
+    const clickedItem = event.target.textContent;
+
+    if ($autoComplete.previousElementSibling.previousElementSibling.id === "firstsearch") {
+      const searchInput = $autoComplete.previousElementSibling.previousElementSibling.previousElementSibling;
+      searchInput.value = clickedItem;
+    }
+    else {
+      const searchP = $autoComplete.previousElementSibling.previousElementSibling;
+      const searchInput = searchP.querySelector("input");
+      searchInput.value = clickedItem;
+    }
+    $autoComplete.innerHTML = ""; // Hide autocomplete results after clicking a suggestion
+  });
 }
 
 

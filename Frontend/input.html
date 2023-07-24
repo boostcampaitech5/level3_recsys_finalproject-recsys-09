@@ -14,8 +14,7 @@
                     alert("입력 가능한 게임 항목은 최대 10개입니다.");
                     return;
                 }
-                newP.innerHTML = "<input type='text' name='search' placeholder='검색어를 입력해주세요.' autocomplete='off' onkeydown='return event.key !== `Enter`;'> <input type='button' value='삭제' onclick='remove(this)'>";
-
+                newP.innerHTML = "<input type='text' name='search' placeholder='검색어를 입력해주세요.' autocomplete='off' onkeydown='return event.key !== `Enter`;'> <span class='autocomplete'></span> <input type='button' value='삭제' onclick='remove(this)'>";
                 const addButton = document.querySelector("#box input[type='button'][value='추가']");
                 box.insertBefore(newP, addButton);
 
@@ -103,17 +102,17 @@
                             placeholder="검색어를 입력해주세요."
                             autocomplete="off"
                             onkeydown="return event.key !== 'Enter';"
-                        />
-                        <br>
+                        />  
+                        <div id="firstsearch"></div>
                         <input type="button" value="추가" onclick="add_textbox()">
-    
+                        <span class="autocomplete"></span>
                     </div>
-                    <div class="autocomplete"></div>
                 </section>
                 
                 <script>
                     const dataList = {{ game_list | tojson }}
                 </script>
+                
                 <script src="{{ url_for('static', path='/search.js')}}"></script>
                 <br>
                 <br>
