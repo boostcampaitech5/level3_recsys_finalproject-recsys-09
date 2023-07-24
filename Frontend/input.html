@@ -15,7 +15,9 @@
                     return;
                 }
                 newP.innerHTML = "<input type='text' name='search' placeholder='검색어를 입력해주세요.' autocomplete='off' onkeydown='return event.key !== `Enter`;'> <input type='button' value='삭제' onclick='remove(this)'>";
-                box.appendChild(newP);
+
+                const addButton = document.querySelector("#box input[type='button'][value='추가']");
+                box.insertBefore(newP, addButton);
 
                 $search.forEach(search => search.addEventListener('input', makeAutocomplete));
             }
@@ -101,7 +103,9 @@
                             placeholder="검색어를 입력해주세요."
                             autocomplete="off"
                             onkeydown="return event.key !== 'Enter';"
-                        />  <input type="button" value="추가" onclick="add_textbox()">
+                        />
+                        <br>
+                        <input type="button" value="추가" onclick="add_textbox()">
     
                     </div>
                     <div class="autocomplete"></div>
