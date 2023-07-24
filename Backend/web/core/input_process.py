@@ -27,7 +27,7 @@ def search_games_gpt(games, db: Session = Depends(get_db)):
     with get_db() as con:
         for game in games:
             if game == '':
-                break
+                continue
             
             param = bindparam("game", game.replace(' ', ''))
             statement = text("""select id, name from game where REPLACE(name, ' ',  '')
@@ -41,5 +41,4 @@ def search_games_gpt(games, db: Session = Depends(get_db)):
                     filter_games.append(r[1])
             else:
                 filter_games.append(game)
-                
     return filter_games
