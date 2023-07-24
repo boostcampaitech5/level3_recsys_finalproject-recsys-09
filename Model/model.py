@@ -223,7 +223,7 @@ class HybridModel():
         
         def select_similar_user(df):
             if len(df) > 3:
-                df['id'] = df['id'].apply(lambda x: x[:5])
+                df.loc[:, 'id'] = df['id'].apply(lambda x: x[:5])
             return df
         
         self.cf_table['similarity'] = self.cf_table['id'].apply(lambda x: game_similarity(x, self.user_games_id))
