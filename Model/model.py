@@ -281,8 +281,7 @@ class HybridModel():
         return self.recommendations
     
 class Most_popular_filter():
-    def __init__(self, age, platform, players, major_genre, user_games_names):
-        self.user_games_names = list(user_games_names)
+    def __init__(self, age, platform, players, major_genre):
         self.age = age
         self.platform = platform
         self.players = players
@@ -290,7 +289,6 @@ class Most_popular_filter():
 
         self.load_game_data()
         self.preprocess_input()
-        self.filtering_data()
         
     def load_game_data(self):
         #engine = create_engine(POSTGRE)
