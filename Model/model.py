@@ -256,7 +256,9 @@ class HybridModel():
         df_numeric = self.final_df.drop(['id', 'genre'], axis=1)
 
         # 숫자 데이터와 장르 데이터 결합
-        df_combined = pd.concat([df_numeric, genre_df], axis=1)
+        if self.tag == -1:
+            df_combined = genre_df
+        else: df_combined = pd.concat([df_numeric, genre_df], axis=1)
 
         # 코사인 유사도 계산
         similarity_matrix = cosine_similarity(df_combined)
