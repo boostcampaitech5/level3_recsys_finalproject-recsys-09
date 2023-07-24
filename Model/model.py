@@ -179,9 +179,8 @@ class HybridModel():
         self.major_genre = major_genre
         self.tag = -1 if tag[0] == -1 else tag # tag 상관없음 처리
 
-        if self.user_games_id:
-            self.load_game_data()
-            self.preprocess()
+        self.load_game_data()
+        self.preprocess()
         
     def load_game_data(self):
         #engine = create_engine(POSTGRE)
@@ -276,10 +275,38 @@ class HybridModel():
         self.recommendations = self.final_df.loc[similar_item_ids, 'id'].tolist()
 
     def predict(self):
-        if not self.user_games_id:
-            return []
-        
         self.cf_predict()
         self.cb_predict()
 
         return self.recommendations
+    
+class Most_popular_filter():
+    def __init__(self, age, platform, players, major_genre, user_games_names):
+        self.user_games_names = list(user_games_names)
+        self.age = age
+        self.platform = platform
+        self.players = players
+        self.major_genre = major_genre
+
+        self.load_game_data()
+        self.preprocess_input()
+        self.filtering_data()
+        
+    def load_game_data(self):
+        #engine = create_engine(POSTGRE)
+        load_dotenv()
+        engine = create_engine(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_DATABASE']}")
+        self.game_table = pd.read_sql_table(table_name="game", con=engine)
+        self.details_table = pd.read_sql_table(table_name="details", con=engine)
+        if self.tag == -1:
+            self.model_table = self.model_table[['id', 'genre']]
+
+    def preprocess_input(self):
+        # 필터링
+        self.idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
+
+    def predict(self):
+        self.details_table = self.details_table[self.details_table['id'].isin(self.idx)]
+        self.details_table = self.details_table.sort_values(by="critic_score", ascending=False)
+
+        return list(self.details_table.head(5)['id'])
