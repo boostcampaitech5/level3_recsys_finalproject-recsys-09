@@ -8,25 +8,6 @@ model serving with FastAPI
 - Pip
 - Poetry (Python Package Manager)
 
-### M.L Model Environment
-
-```sh
-MODEL_PATH=./ml/model/
-MODEL_NAME=model.pkl
-```
-
-### Update `/predict`
-
-To update your machine learning model, add your `load` and `method` [change here](app/api/routes/predictor.py#L19) at `predictor.py`
-
-## Installation
-
-```sh
-python -m venv venv
-source venv/bin/activate
-make install
-```
-
 ## Runnning Localhost
 
 `make run`
