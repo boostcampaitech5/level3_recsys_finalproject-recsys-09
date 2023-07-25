@@ -42,14 +42,6 @@ import os
 redis_client = DirectRedis(host=MODEL_IP, port=REDIS_PORT)
 
 def redis_use():
-    # read by POSTGRE
-    # engine = create_engine(POSTGRE)
-    # game_table = pd.read_sql_table(table_name="game", con=engine)
-    # cb_model_table = pd.read_sql_table(table_name="cb_model", con=engine)
-    # Ease_table = pd.read_sql_table(table_name="Ease", con=engine)
-    # cf_table = pd.read_sql_table(table_name="cf_model", con=engine)
-    # details_table = pd.read_sql_table(table_name="details", con=engine)
-
     # read by bigquery
     game_table = read_bigquery("game")
     cb_model_table = read_bigquery("cb_model")
