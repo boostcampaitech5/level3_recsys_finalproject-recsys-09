@@ -15,7 +15,7 @@ function makeAutocomplete(event) {
 
   $autoComplete.forEach((auto) => {
     auto.addEventListener("click", (event) => {
-      const clickedItem = event.target.textContent;
+      const clickedItem = event.target.textContent.trim();
       const searchInput = auto.previousElementSibling;
       searchInput.value = clickedItem;
       auto.innerHTML = ""; // Hide autocomplete results after clicking a suggestion
