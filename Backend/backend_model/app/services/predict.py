@@ -20,7 +20,6 @@ from services.filters import filter
 from direct_redis import DirectRedis
 
 redis_client = DirectRedis(host=MODEL_IP, port=REDIS_PORT)
-# redis_client = DirectRedis(host="localhost", port=REDIS_PORT)
 
 import openai
 
