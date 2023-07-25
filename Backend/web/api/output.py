@@ -34,5 +34,8 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     
     # model server response 처리를 통한 추천 game list 생성
     game_dic = create_response(hb_model, gpt, user)
-
-    return templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
+    
+    response = templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
+    response.set_cookie(key="id", value=id)
+    
+    return response
