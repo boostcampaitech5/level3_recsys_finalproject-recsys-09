@@ -28,13 +28,3 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     game_dic = create_response(hb_model, gpt, user)
 
     return templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
-
-
-@output_router.post("/feedback")
-def get_feedback(request: Request, feedback: FeedbackRequest = Depends(FeedbackRequest.as_form)):
-    
-    templates =  get_template()
-    
-    print(feedback)
-    return templates.TemplateResponse("main.html", BaseResponse(request=request).__dict__)
-
