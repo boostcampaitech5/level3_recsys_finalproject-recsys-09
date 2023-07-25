@@ -10,10 +10,15 @@ from core.config import MODEL_HOST, MODEL_PORT
 def get_response(model, user, api):
     input = model(**user.__dict__)
     
-    if api == "cf_model" and not input.games:
+    if api == "hb_model" and not input.games:
         return []
         
     response = requests.post(f"http://{MODEL_HOST}:{MODEL_PORT}/api/{api}/predict", json=input.__dict__)
+    
+    try:
+        response.raise_for_status()
+    except:
+        return []
     
     return response.json()['games']
 
@@ -24,7 +29,7 @@ def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
     gpt = search_games(gpt)
     
     for id in gpt:
-        if len(game_id) == 3:
+        if len(game_id) == 6:
             break
         
         if id in game_id:
@@ -33,7 +38,7 @@ def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
         game_id.append(id)
         
     for id in hb_model:
-        if len(game_id) == 5:
+        if len(game_id) == 10:
             break
         
         if id in game_id:
@@ -44,7 +49,7 @@ def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
     if len(game_id) < 5:
         popular = get_response(ModelRequest, user, 'popular')
         for id in popular:
-            if len(game_id) == 5:
+            if len(game_id) == 10:
                 break
             
             if id in game_id:

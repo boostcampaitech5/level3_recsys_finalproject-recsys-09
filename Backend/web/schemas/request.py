@@ -77,6 +77,8 @@ class GPTRequest(BaseModel):
     age: str
     platform: list
     players: str
+    major_genre: list
+    tag: list
     games: list
     
     @validator('games')
