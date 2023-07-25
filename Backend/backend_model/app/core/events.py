@@ -1,16 +1,9 @@
-from typing import Callable
-
 from fastapi import FastAPI
-from sqlalchemy import create_engine
 from core.config import POSTGRE, MODEL_IP, REDIS_PORT, JSON_PATH
-import pandas as pd
 from direct_redis import DirectRedis
 
-import glob
 from google.cloud import bigquery
 from google.oauth2 import service_account
-
-import os
 
 def read_bigquery(table_name):
     # Credentials 객체 생성
