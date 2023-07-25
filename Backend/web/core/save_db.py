@@ -49,13 +49,16 @@ def save_model_output(id, hb_model, gpt, client):
     client.query(sql_gpt, job_config=job_config_gpt).result()
     
         
-def save_feedback(id, feedback):
-    with get_db2() as con:
-        params = [bindparam("id", id), bindparam("cb_model", [int(id) for id in feedback.cblike]), \
-            bindparam("gpt", [int(id) for id in feedback.gptlike]), bindparam("cf_model", [int(id) for id in feedback.cflike])]
-        statement = text("""insert into feedback (id, cb_model, gpt, cf_model)
-                         values (:id, :cb_model, :gpt, :cf_model)""")
-        
-        statement = statement.bindparams(*params)
-        con.execute(statement)
-        con.commit()
+def save_feedback(id, feedback, client):
+    print(feedback.like)
+    sql = """
+    INSERT INTO review.feedback (id, likes)
+    VALUES (@id, @likes)
+    """
+    job_config= bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("id", "STRING", id),
+            bigquery.ArrayQueryParameter("likes", "INT64",  [int(id) for id in feedback.like])
+        ]
+    )
+    client.query(sql, job_config=job_config).result()
