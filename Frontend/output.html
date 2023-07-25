@@ -7,15 +7,10 @@
         <link rel="stylesheet" href="{{ url_for('static', path='/output.css')}}">
     </head>
     <body style="background-color:rgb(255, 245, 230)">
-        <form method="post" action = "http://{{ ip }}:{{ port }}/output/feedback"  id="feedbackForm">
+        <form method="post" action = "http://{{ ip }}:{{ port }}/home"  id="feedbackForm">
             <div class="container">
-                {% for key, game in games.items() %}
-                    <img src="{{game[1]}}" alt="game"> <br>
-                    <h3>{{game[0]}}</h3>
-                    <h4> platforms : {{game[2]}}</h4>
-                
-                    추천 결과가 마음에 드시나요?
-                    <style>
+
+                <style>
                     .btn-like {
                         color: transparent;
                         text-shadow: 0 0 2px rgba(255,255,255,.7), 0 0 0 #000;
@@ -31,7 +26,18 @@
                         color: transparent;
                         text-shadow: 0 0 0 #777;
                     }
-                    </style>
+                </style>
+            
+                {% for key, game in games.items() %}
+                    <img src="{{game[3]}}" alt="game"> <br>
+                    <a href="{{game[2]}}" target="_blank">
+                        <h3>{{game[1]}}</h3>
+                    </a>
+                    <h4> platforms : {{game[4]}}</h4>
+                    <h4> genres : {{game[5]}}</h4>
+                
+                    추천 결과가 마음에 드시나요?
+
                     <button type="button" name="{{key}}" class="btn-like">👍</button>
                     <input type="hidden" id="{{key}}" name="dislike" value="{{game[0]}}">
 
@@ -56,23 +62,14 @@
                     }
                 })
                 </script> 
-            </div>
-        </form>
         <br>
         <br>
         home button을 눌러주세요🥹
         <br>
         <br>
 
-        <a href="http://{{ ip }}:{{ port }}/main" onclick="submitForm(event)">
-            <img src="{{ url_for('static', path='./image/home_button.png')}}" alt="homebutton" width="110" height="40">
-        </a>
-
-        <script>
-            function submitForm(event) {
-                event.preventDefault();
-                document.getElementById('feedbackForm').submit();
-            }
-        </script>
+        <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" alt="start" width="110" height="40">    </div>
+        </form>
+       
     </body>
 </html>
