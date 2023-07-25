@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from services.predict import chatGPT
 from models.prediction import (
     RecommendedGame,
-    GPTInput
+    ModelInput
 )
 
 router = APIRouter()
@@ -28,14 +28,12 @@ def make_list(gpt_answer):
     response_model=RecommendedGame,
     name="predict:get-input",
 )
-async def gpt_recommend(data_input: GPTInput):
+async def gpt_recommend(data_input: ModelInput):
 
     if not data_input:
         raise HTTPException(status_code=404, detail="'data_input' argument invalid!")
     try:
-        # user_data = data_input.get_user_data()
         recommendations = get_recommendations(data_input)
-        print(recommendations)
         recommendations = make_list(recommendations)
 
     except Exception as err:
