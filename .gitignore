@@ -14,3 +14,4 @@ saved/
 *.ipynb_checkpoints
 *.env
 Dockerfile
+*.json
