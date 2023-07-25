@@ -26,6 +26,12 @@
             }
         </script>
         <link rel="stylesheet" href="{{ url_for('static', path='/input.css')}}">
+        <script>
+            window.onpageshow = function(){
+                form.style.display = "block"
+                loading.style.display = "none"
+            }
+        </script>
     </head>
 
     <body style="background-color:rgb(255, 245, 230)">
@@ -121,8 +127,27 @@
     
                 <input type="image" src="{{ url_for('static', path='image/submit_button.png')}}" id="submit" alt="submit" width="110" height="40" disabled>
             </form>
+
             <script src="{{ url_for('static', path='/next.js')}}"></script>
-    
+
+            <div id="loading">
+                <h1> 로딩 중입니다 </h1>
+            </div>
+            
+            <script>
+                const form = document.getElementById("inputForm")
+                const loading = document.getElementById("loading")
+
+                form.onsubmit = function () {
+                    // 폼 제출 시 로딩 화면 보이도록 설정
+                    form.style.display = "none"
+                    loading.style.display = "flex";
+
+                };
+            </script>
+
+
+            
         </div>
     </body>
 </html>
