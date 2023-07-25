@@ -63,3 +63,8 @@ cursor: not-allowed;
 [type="checkbox"]:checked {
 border: 0.625em solid tomato;
 }
+
+#loading {
+  height: 300px;
+  text-align: center;
+}
