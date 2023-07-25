@@ -3,16 +3,16 @@ name: Push Docker Image
 on:
   push:
     branches:
-      - feat#50 # 또는 배포하려는 브랜치
+      - develop # 또는 배포하려는 브랜치
     paths:
       - 'Backend/backend_model/**'
 
 env:
   DOCKER_REGISTRY: heewoni # Docker Hub 사용시
-  IMAGE_NAME: feat50 # 이미지 이름
+  IMAGE_NAME: model_web # 이미지 이름
   IMAGE_TAG: latest # 이미지 태그
   DOCKERFILE_PATH: ./Backend/backend_model # 빌드를 원하는 폴더 경로
-  CONTAINER_NAME: test # 컨테이너 이름
+  CONTAINER_NAME: model # 컨테이너 이름
 
 jobs:
   build:
