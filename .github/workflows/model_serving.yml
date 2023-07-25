@@ -49,4 +49,4 @@ jobs:
               docker stop $CONTAINER_NAME
               docker rm $CONTAINER_NAME
               docker rmi $(docker images -f "dangling=true" -q)
-              docker run --env-file .env -d --name $CONTAINER_NAME -p 8080:8080 $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+              docker run --env-file .env -d -v bigquery.json:./bigquery.json --name $CONTAINER_NAME -p 8080:8080 $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
