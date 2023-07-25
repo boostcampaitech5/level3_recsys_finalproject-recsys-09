@@ -2,7 +2,7 @@ from typing import Callable
 
 from fastapi import FastAPI
 from sqlalchemy import create_engine
-from core.config import POSTGRE, MODEL_IP, REDIS_PORT
+from core.config import POSTGRE, MODEL_IP, REDIS_PORT, JSON_PATH
 import pandas as pd
 from direct_redis import DirectRedis
 
@@ -10,12 +10,11 @@ import glob
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-def read_bigquery(table_name):
-    # 서비스 계정 키 JSON 파일 경로
-    key_path = "./app/bigquery.json"
+import os
 
+def read_bigquery(table_name):
     # Credentials 객체 생성
-    credentials = service_account.Credentials.from_service_account_file(key_path)
+    credentials = service_account.Credentials.from_service_account_file(JSON_PATH)
 
     # GCP 클라이언트 객체 생성
     client = bigquery.Client(credentials = credentials, 
@@ -41,7 +40,6 @@ def read_bigquery(table_name):
 import os
 
 redis_client = DirectRedis(host=MODEL_IP, port=REDIS_PORT)
-# redis_client = DirectRedis(host="localhost", port=REDIS_PORT)
 
 def redis_use():
     # read by POSTGRE
