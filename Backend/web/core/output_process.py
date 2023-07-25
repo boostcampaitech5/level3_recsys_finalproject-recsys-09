@@ -3,7 +3,9 @@ from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session
 import requests
 from database.db import get_db
+from schemas.request import ModelRequest
 from core.config import MODEL_HOST, MODEL_PORT
+
 
 def get_response(model, user, api):
     input = model(**user.__dict__)
@@ -16,35 +18,74 @@ def get_response(model, user, api):
     return response.json()['games']
 
 
-def create_response(cb_model, gpt, db: Session = Depends(get_db)):
+def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
+    game_id = []
+    
+    gpt = search_games(gpt)
+    
+    for id in gpt:
+        if len(game_id) == 3:
+            break
+        
+        if id in game_id:
+            continue
+        
+        game_id.append(id)
+        
+    for id in hb_model:
+        if len(game_id) == 5:
+            break
+        
+        if id in game_id:
+            continue
+        
+        game_id.append(id)
+    
+    if len(game_id) < 5:
+        popular = get_response(ModelRequest, user, 'popular')
+        for id in popular:
+            if len(game_id) == 5:
+                break
+            
+            if id in game_id:
+                continue
+            
+            game_id.append(id)
+            
     game_dic = {}
-    dic_len = 0
     
     with get_db() as con:
-        for title in gpt:
-            title_param = bindparam("title", title)
-            
-            statement = text("select name, img_url, platform from game where name=:title")
-            statement = statement.bindparams(title_param)
-            gpt_result = con.execute(statement)
-            
-            for rs in gpt_result:
-                if dic_len == 4:
-                    break
-                game_dic[dic_len] = rs
-                dic_len += 1
+        param = bindparam("game_id", game_id)
+        statement = text(f"""select a.id, a.name, b.url, a.img_url, a.platform, a.major_genre
+                            from (select id, name, img_url, platform, major_genre from game where id = ANY(:game_id)) a
+                            inner join details b
+                            on a.id = b.id""")
+        statement = statement.bindparams(param)
+        cb_result = con.execute(statement)
         
-        for id in cb_model:
-            statement = text(f"select id, name, img_url, platform from game where id={id}")
-            cb_result = con.execute(statement)
-            
-            for rs in cb_result:
-                if dic_len == 5:
-                    break
-                game_dic[dic_len] = rs
-                dic_len += 1
+        for idx, rs in enumerate(cb_result):
+            game_info = [elem for elem in rs]
+            game_info[2] = game_info[2].split(',')[0].strip()[1:-1]
+            game_dic[idx] = game_info
     
     return game_dic
+
+
+def search_games(games, db: Session = Depends(get_db)):
+    filter_games = []
+    
+    with get_db() as con:
+            for game in games:
+                param = bindparam("game", game.replace(' ', ''))
+                statement = text("""select id, name from game where REPLACE(name, ' ',  '')
+                                 ilike :game""")
+                statement = statement.bindparams(param)
+                result = con.execute(statement)
+                
+                for rs in result:
+                    filter_games.append(rs[0])
+                    
+    return filter_games
 
 
 def ab_create_response(model, name, type, db: Session = Depends(get_db)):
