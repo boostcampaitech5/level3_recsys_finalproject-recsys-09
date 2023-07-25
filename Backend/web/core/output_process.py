@@ -10,10 +10,15 @@ from core.config import MODEL_HOST, MODEL_PORT
 def get_response(model, user, api):
     input = model(**user.__dict__)
     
-    if api == "cf_model" and not input.games:
+    if api == "hb_model" and not input.games:
         return []
         
     response = requests.post(f"http://{MODEL_HOST}:{MODEL_PORT}/api/{api}/predict", json=input.__dict__)
+    
+    try:
+        response.raise_for_status()
+    except:
+        return []
     
     return response.json()['games']
 
