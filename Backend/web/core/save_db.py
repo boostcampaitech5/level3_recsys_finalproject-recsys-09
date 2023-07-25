@@ -1,7 +1,4 @@
 from google.cloud import bigquery
-from sqlalchemy import text, bindparam
-from database.db import get_db2
-
 
 def save_user_info(id, user, client):
     sql = """
