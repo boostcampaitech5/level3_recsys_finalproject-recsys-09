@@ -33,7 +33,7 @@ async def output_page(request: Request, background_tasks: BackgroundTasks, user:
     background_tasks.add_task(save_model_output, id, hb_model, gpt, client)
     
     # model server response 처리를 통한 추천 game list 생성
-    game_dic = create_response(hb_model, gpt, user)
+    game_dic = create_response(hb_model, gpt, user, client)
     
     response = templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
     response.set_cookie(key="id", value=id)
