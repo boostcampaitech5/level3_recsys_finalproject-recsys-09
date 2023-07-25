@@ -1,18 +1,17 @@
 from fastapi import APIRouter, Request, Depends
 from schemas.response import BaseResponse
-from schemas.request import FeedbackRequest
+from schemas.request import GameFeedbackRequest
 from core.preload import get_template
 from core.save_db import save_feedback
 
 home_router = APIRouter(prefix="/home")
 
 @home_router.post("/")
-def home_page(request: Request,  feedback: FeedbackRequest = Depends(FeedbackRequest.as_form)):
+def home_page(request: Request,  feedback: GameFeedbackRequest = Depends(GameFeedbackRequest.as_form)):
     
     templates =  get_template()
     
     id = request.cookies.get("id")
-    save_feedback(id, feedback)
     
     return templates.TemplateResponse("main.html", BaseResponse(request=request).__dict__)
 

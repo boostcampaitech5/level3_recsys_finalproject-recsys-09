@@ -47,6 +47,17 @@ class FeedbackRequest(BaseModel):
         cflike: list = Form(...)
     ):
         return cls(gptlike=gptlike, cblike=cblike, cflike=cflike)
+    
+    
+class GameFeedbackRequest(BaseModel):
+    like: list
+    
+    @classmethod
+    def as_form(
+        cls,
+        like: list = Form(...)
+    ):
+        return cls(like=like)
 
 
 class ModelRequest(BaseModel):
