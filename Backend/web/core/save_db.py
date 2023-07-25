@@ -1,37 +1,53 @@
-from fastapi import Depends
+from google.cloud import bigquery
 from sqlalchemy import text, bindparam
-from sqlalchemy.orm import Session
 from database.db import get_db2
 
-def save_user_info(user, db: Session = Depends(get_db2)):
-    with get_db2() as con:
-        params = [bindparam("age", int(user.age)), bindparam("platform", user.platform), bindparam("players", int(user.players)), \
-            bindparam("major_genre", user.major_genre), bindparam("tag", user.tag), bindparam("games", user.games)]
-        statement = text("""insert into user_info (age, platform, players, major_genre, tag, games)
-                            values (:age, :platform, :players, :major_genre, 
-                            :tag, :games) returning id""")
-        statement = statement.bindparams(*params)
-        
-        result = con.execute(statement)
-        
-        for rs in result:
-            id = rs[0]
-        
-        con.commit()
-        
-    return id
 
-def save_model_output(id, cb_list, gpt_list, cf_list, db: Session = Depends(get_db2)):
-    with get_db2() as con:
-        for table, output in [("cb_model_output", cb_list), ("gpt_output", gpt_list), ("cf_model_output", cf_list)]:
-            params = [bindparam("id", id), bindparam("games", output)]
-            statement = text(f"""insert into {table} (id, games)
-                            values (:id, :games)""")
-            
-            statement = statement.bindparams(*params)
-            
-            con.execute(statement)
-        con.commit()
+def save_user_info(id, user, client):
+    sql = """
+    INSERT INTO review.user_info (id, age, platform, players, major_genre, tag, games)
+    VALUES (@id, @age, @platform, @players, @major_genre, @tag, @games)
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("id", "STRING", id),
+            bigquery.ScalarQueryParameter("age", "INT64", int(user.age)),
+            bigquery.ArrayQueryParameter("platform", "STRING", user.platform),
+            bigquery.ScalarQueryParameter("players", "INT64", int(user.players)),
+            bigquery.ArrayQueryParameter("major_genre", "STRING", user.major_genre),
+            bigquery.ArrayQueryParameter("tag", "STRING", user.tag),
+            bigquery.ArrayQueryParameter("games", "STRING", user.games)
+        ]
+    )
+    client.query(sql, job_config=job_config).result()
+
+
+def save_model_output(id, hb_model, gpt, client):
+
+    sql_hb = f"""
+    INSERT INTO review.hb_output (id, games)
+    VALUES (@id, @games)
+    """
+    job_config_hb = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("id", "STRING", id),
+            bigquery.ArrayQueryParameter("games", "INT64", hb_model)
+        ]
+    )
+    client.query(sql_hb, job_config=job_config_hb).result()
+    
+    sql_gpt = f"""
+    INSERT INTO review.gpt_output (id, games)
+    VALUES (@id, @games)
+    """
+    job_config_gpt = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("id", "STRING", id),
+            bigquery.ArrayQueryParameter("games", "STRING", gpt)
+        ]
+    )
+    client.query(sql_gpt, job_config=job_config_gpt).result()
+    
         
 def save_feedback(id, feedback):
     with get_db2() as con:
