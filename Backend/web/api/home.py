@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, BackgroundTasks
 from google.cloud import bigquery
 from schemas.response import BaseResponse
 from schemas.request import GameFeedbackRequest
@@ -9,12 +9,12 @@ from database.bigquery import get_bigquery_client
 home_router = APIRouter(prefix="/home")
 
 @home_router.post("/")
-def home_page(request: Request,  feedback: GameFeedbackRequest = Depends(GameFeedbackRequest.as_form), client: bigquery.Client = Depends(get_bigquery_client)):
+async def home_page(request: Request,  background_tasks: BackgroundTasks, feedback: GameFeedbackRequest = Depends(GameFeedbackRequest.as_form), client: bigquery.Client = Depends(get_bigquery_client)):
     
     templates =  get_template()
     
     id = request.cookies.get("id")
-    save_feedback(id, feedback, client)
+    background_tasks.add_task(save_feedback, id, feedback, client)
     
     return templates.TemplateResponse("main.html", BaseResponse(request=request).__dict__)
 
