@@ -12,7 +12,7 @@ from google.oauth2 import service_account
 
 def read_bigquery(table_name):
     # 서비스 계정 키 JSON 파일 경로
-    key_path = glob.glob("./bigquery.json")[0]
+    key_path = glob.glob("./app/bigquery.json")[0]
 
     # Credentials 객체 생성
     credentials = service_account.Credentials.from_service_account_file(key_path)
