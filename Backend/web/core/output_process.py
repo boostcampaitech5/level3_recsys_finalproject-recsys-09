@@ -6,6 +6,7 @@ from database.db import get_db
 from schemas.request import ModelRequest
 from core.config import MODEL_HOST, MODEL_PORT
 
+
 def get_response(model, user, api):
     input = model(**user.__dict__)
     
@@ -55,15 +56,17 @@ def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
     
     with get_db() as con:
         param = bindparam("game_id", game_id)
-        statement = text(f"""select a.id, a.name, b.url, a.img_url, a.platform 
-                            from (select id, name, img_url, platform from game where id = ANY(:game_id)) a
+        statement = text(f"""select a.id, a.name, b.url, a.img_url, a.platform, a.major_genre
+                            from (select id, name, img_url, platform, major_genre from game where id = ANY(:game_id)) a
                             inner join details b
                             on a.id = b.id""")
         statement = statement.bindparams(param)
         cb_result = con.execute(statement)
         
         for idx, rs in enumerate(cb_result):
-            game_dic[idx] = rs
+            game_info = [elem for elem in rs]
+            game_info[2] = game_info[2].split(',')[0].strip()[1:-1]
+            game_dic[idx] = game_info
     
     return game_dic
 
