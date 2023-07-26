@@ -22,8 +22,7 @@ def get_db():
         yield db
     finally:
         db.close()
-        
-@contextlib.contextmanager
+     
 def get_db2():
     db = SessionLocal2()
     try:
