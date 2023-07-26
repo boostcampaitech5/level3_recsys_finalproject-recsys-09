@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request
 from core.preload import get_game_list, get_template
 from schemas.response import InputResponse
 
