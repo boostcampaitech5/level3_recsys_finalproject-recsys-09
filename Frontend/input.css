@@ -30,17 +30,20 @@ section {
 }
 
 fieldset {
-margin: 20px;
-}
-
+  margin: 20px;
+  border: 0 solid black;
+ }
+ 
 #young {
-margin-top: 20px;
-margin-left: 0px;
+  margin-top: 20px;
+  margin-left: 0px;
+  background-color: rgb(240, 240, 240);
+  border-radius: 15px;
 }
 
 legend {
-background-color:rgb(255, 115, 50);
-border-radius: 15px;
+  color:rgb(255, 115, 50);
+  border-radius: 15px;
 }
 
 
