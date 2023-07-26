@@ -9,7 +9,7 @@
   
   .box {
       display: grid;
-      grid-template-columns: repeat(auto-fill, 275px);
+      grid-template-columns: repeat(4, 275px);
       grid-gap: 20px;
       justify-content: center;
       max-width: 1200px;
