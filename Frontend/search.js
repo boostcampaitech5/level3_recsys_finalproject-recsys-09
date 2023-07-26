@@ -15,9 +15,16 @@ function makeAutocomplete(event) {
 
   $autoComplete.forEach((auto) => {
     auto.addEventListener("click", (event) => {
-      const clickedItem = event.target.textContent.trim();
-      const searchInput = auto.previousElementSibling;
-      searchInput.value = clickedItem;
+      if (event.target.tagName === "MARK") {
+        const clickedItem = event.target.parentElement.textContent.trim();
+        const searchInput = auto.previousElementSibling;
+        searchInput.value = clickedItem;
+      }
+      else {
+        const clickedItem = event.target.textContent.trim();
+        const searchInput = auto.previousElementSibling;
+        searchInput.value = clickedItem;
+      }
       auto.innerHTML = ""; // Hide autocomplete results after clicking a suggestion
     });
   });
