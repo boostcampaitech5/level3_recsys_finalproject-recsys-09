@@ -23,7 +23,7 @@ def get_response(model, user, api):
     return response.json()['games']
 
 
-def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
+def create_response(hb_model, gpt, user):
     game_id = []
     
     gpt = search_games(gpt)
@@ -76,7 +76,7 @@ def create_response(hb_model, gpt, user, db: Session = Depends(get_db)):
     return game_dic
 
 
-def search_games(games, db: Session = Depends(get_db)):
+def search_games(games):
     filter_games = []
     
     with get_db() as con:
@@ -93,7 +93,7 @@ def search_games(games, db: Session = Depends(get_db)):
     return filter_games
 
 
-def ab_create_response(model, name, type, db: Session = Depends(get_db)):
+def ab_create_response(model, name, type):
     game_list = []
     game_dic = {}
     dic_len = 0

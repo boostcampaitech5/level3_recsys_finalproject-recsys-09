@@ -1,10 +1,8 @@
-from fastapi import Depends
 from sqlalchemy import bindparam, text
-from sqlalchemy.orm import Session
 from database.db import get_db
 
 
-def search_games_model(games, db: Session = Depends(get_db)):
+def search_games_model(games):
     filter_games = []
     
     with get_db() as con:
@@ -21,7 +19,7 @@ def search_games_model(games, db: Session = Depends(get_db)):
     return filter_games
 
 
-def search_games_gpt(games, db: Session = Depends(get_db)):
+def search_games_gpt(games):
     filter_games = []
     
     with get_db() as con:
