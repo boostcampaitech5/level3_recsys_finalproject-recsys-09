@@ -19,7 +19,6 @@ pandas = "^2.0.3"
 sqlalchemy = "^2.0.18"
 psycopg2 = "^2.9.6"
 openai = "^0.27.8"
-pandas-gbq = "^0.19.2"
 
 [build-system]
 requires = ["poetry>=0.12"]
