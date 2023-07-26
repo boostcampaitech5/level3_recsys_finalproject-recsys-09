@@ -7,17 +7,22 @@
     font-family: 'NanumSquare';
   }
   
-  .box {
-      display: grid;
-      grid-template-columns: repeat(4, 275px);
-      grid-gap: 20px;
-      justify-content: center;
-      max-width: 1200px;
-      margin: 0 auto;
-  }
-  
-  .games {
-    width: 275px;
-    background-color: rgb(240, 240, 240);
-    border-radius: 15px;
-  }
+.box {
+    display: grid;
+    grid-template-columns: repeat(4, 275px);
+    grid-gap: 15px;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-end;
+}
+
+.games {
+width: 275px;
+border-radius: 15px;
+}
+
+.gameimg {
+    max-width: 80%; /* 이미지의 가로 크기가 부모 요소의 80%까지만 늘어남 */
+    height: auto;
+}
