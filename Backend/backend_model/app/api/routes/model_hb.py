@@ -1,6 +1,3 @@
-import json
-
-import joblib
 from fastapi import APIRouter, HTTPException
 
 from services.predict import HybridModel

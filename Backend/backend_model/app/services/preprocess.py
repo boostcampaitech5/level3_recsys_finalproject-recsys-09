@@ -1,5 +1,5 @@
 from core.errors import PredictException, ModelLoadException
-from core.config import MODEL_NAME, MODEL_PATH, POSTGRE, API_KEY, MODEL_IP, REDIS_PORT
+from core.config import POSTGRE, MODEL_IP, REDIS_PORT
 
 import pandas as pd
 from sqlalchemy import create_engine

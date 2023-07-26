@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from core.config import POSTGRE, MODEL_IP, REDIS_PORT, JSON_PATH
+from core.config import POSTGRE, MODEL_IP, REDIS_PORT
 from direct_redis import DirectRedis
 from sqlalchemy import create_engine
 import pandas as pd
