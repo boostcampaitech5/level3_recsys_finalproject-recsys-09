@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Request, Depends
-from schemas.response import OutputResponse, BaseResponse
-from schemas.request import UserRequest, ModelRequest, GPTRequest, FeedbackRequest
+from sqlalchemy.orm import Session
+from schemas.response import OutputResponse
+from schemas.request import UserRequest, ModelRequest, GPTRequest
 from core.preload import get_template
 from core.output_process import get_response, create_response
+from core.save_db import save_user_info, save_model_output
+from database.db import get_db2
 
 output_router = APIRouter(prefix="/output")
 
 @output_router.post("/")
-def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_form)):
+def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_form), db: Session = Depends(get_db2)):
     """
     user에게 받은 input을 model의 input으로 넘겨주고 추천 game을 받아 output page를 return한다.
     
@@ -19,22 +22,18 @@ def output_page(request: Request, user: UserRequest = Depends(UserRequest.as_for
     """
     
     templates =  get_template()
+    id = save_user_info(user, db)
     
     # model server로 request 보내기
     hb_model = get_response(ModelRequest, user, 'hb_model')
     gpt = get_response(GPTRequest, user, 'gpt')
+    save_model_output(id, gpt, 'gpt', db)
+    save_model_output(id, hb_model, 'hb_model', db)
     
     # model server response 처리를 통한 추천 game list 생성
     game_dic = create_response(hb_model, gpt, user)
-
-    return templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
-
-
-@output_router.post("/feedback")
-def get_feedback(request: Request, feedback: FeedbackRequest = Depends(FeedbackRequest.as_form)):
     
-    templates =  get_template()
-    
-    print(feedback)
-    return templates.TemplateResponse("main.html", BaseResponse(request=request).__dict__)
+    response = templates.TemplateResponse("output.html", OutputResponse(request=request, games=game_dic).__dict__)
+    response.set_cookie(key="id", value=id)
 
+    return response
