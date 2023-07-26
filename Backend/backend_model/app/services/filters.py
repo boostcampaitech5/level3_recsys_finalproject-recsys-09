@@ -59,8 +59,11 @@ def platform_filter(df_, platform):
     return  df[df['id'].isin(idx_arr)]
     
 
-def filter (df, age, platform, players, major_genre):
-    output = platform_and_genre_filter(df, platform, major_genre)
+def filter (df, age, platform, players, major_genre, type):
+    if type == 'cb':
+        output = platform_and_genre_filter(df, platform, major_genre)
+    else: # cf
+        output = platform_filter(df, platform)
     output = players_filter(output, players)
     output = age_filter(output, age)
 
