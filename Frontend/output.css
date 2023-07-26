@@ -1,6 +1,23 @@
 .container {
     margin: 0 auto;
-    width: 500px;
+    width: 1200px;
     text-align: center;
     background-color: white;
-}
+    border-radius: 15px;
+    font-family: 'NanumSquare';
+  }
+  
+  .box {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 275px);
+      grid-gap: 20px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 0 auto;
+  }
+  
+  .games {
+    width: 275px;
+    background-color: rgb(240, 240, 240);
+    border-radius: 15px;
+  }
