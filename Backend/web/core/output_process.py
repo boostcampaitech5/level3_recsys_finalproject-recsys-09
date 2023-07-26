@@ -26,17 +26,20 @@ def create_response(hb_model, gpt, user):
     
     gpt = search_games(gpt)
     
-    gpt_len, hb_len = len(gpt), len(hb_model)
+    lst1, lst2 = gpt, hb_model
+    if not lst1: 
+        lst1, lst2 = lst2, lst1
     
-    if gpt_len + hb_len >= 8:
-        if gpt_len < 5:
-            game_id = gpt[:gpt_len] + hb_model[:8-gpt_len]
-        elif hb_len < 3:
-            game_id = hb_model[:hb_len] + gpt[:8-hb_len]
-        else:
-            game_id = gpt[:5] + hb_model[:3]
-    else:
-        game_id = gpt + hb_model
+    while len(game_id) < 8 and lst1:
+        game_id.append(lst1.pop(0))
+        if lst2:
+            if lst1 and len(game_id) >= 7:
+                continue
+            lst1, lst2 = lst2, lst1
+
+    print(game_id)
+    game_len = len(game_id)
+    if game_len < 8:
         n_popular = 8-len(game_id)
         popular = get_response(ModelRequest, user, 'popular')
         game_id += popular[:n_popular]
@@ -44,18 +47,19 @@ def create_response(hb_model, gpt, user):
     game_dic = {}
     
     with get_db() as con:
-        param = bindparam("game_id", game_id)
-        statement = text(f"""select a.id, a.name, b.url, a.img_url, a.platform, a.major_genre
-                            from (select id, name, img_url, platform, major_genre from game where id = ANY(:game_id)) a
-                            inner join details b
-                            on a.id = b.id""")
-        statement = statement.bindparams(param)
-        cb_result = con.execute(statement)
-        
-        for idx, rs in enumerate(cb_result):
-            game_info = [elem for elem in rs]
-            game_info[2] = game_info[2].split(',')[0].strip()[1:-1]
-            game_dic[idx] = game_info
+        for idx, id in enumerate(game_id):
+            param = bindparam("id", id)
+            statement = text(f"""select a.id, a.name, b.url, a.img_url, a.platform, a.major_genre
+                                from (select id, name, img_url, platform, major_genre from game where id = :id) a
+                                inner join details b
+                                on a.id = b.id""")
+            statement = statement.bindparams(param)
+            result = con.execute(statement)
+            
+            for rs in result:
+                game_info = [elem for elem in rs]
+                game_info[2] = game_info[2].split(',')[0].strip()[1:-1]
+                game_dic[idx] = game_info
     
     return game_dic
 
