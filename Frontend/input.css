@@ -1,23 +1,22 @@
 /* 현재 선택된 검색어 */
 .autocomplete > div.active {
-  background: #e0e5f6;
+  background: #ffffff;
   color: #000;
 }
 
 .autocomplete > div {
-background: #f1f3f499;
+background: #ffffff;
+border: 1px solid rgb(240, 240, 240);
 padding: 0.2rem 0.6rem;
-
+margin-right: 15px;
 }
 
 section {
-  width: 500px;
-  box-shadow: 0 0 1rem rgba(0, 0, 0, .05);  
-  border-radius: 5px;
+  border-radius: 15px;
+  margin: 20px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: #fff;
+  flex-direction: column; 
+  background-color:  rgb(240, 240, 240);
   margin-top: 2rem;
 }
 
@@ -91,4 +90,13 @@ border: 0.625em solid rgb(255, 115, 50);
 height: 300px;
 text-align: center;
 font-family: 'NanumSquare';
+}
+
+#satisfy {
+margin-left: 15px;
+}
+
+#box {
+margin-left: 15px;
+margin-bottom: 15px;
 }
