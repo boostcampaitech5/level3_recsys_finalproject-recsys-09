@@ -1,6 +1,4 @@
-from fastapi import Depends
 from sqlalchemy import bindparam, text
-from sqlalchemy.orm import Session
 import requests
 from database.db import get_db
 from schemas.request import ModelRequest
