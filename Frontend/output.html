@@ -5,11 +5,15 @@
         <title> GameP!ck </title>
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
         <link rel="stylesheet" href="{{ url_for('static', path='/output.css')}}">
+        <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
     </head>
-    <body style="background-color:rgb(255, 245, 230)">
+    <body style="background-color:rgb(240, 240, 240)">
         <form method="post" action = "http://{{ ip }}:{{ port }}/home"  id="feedbackForm">
             <div class="container">
-
+                <br><br>
+                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" alt="start" width="165" height="60"> 
+                <br> 🏠 main 페이지로 돌아가기 🏠 <br><br> 
+                   
                 <style>
                     .btn-like {
                         color: transparent;
@@ -27,24 +31,26 @@
                         text-shadow: 0 0 0 #777;
                     }
                 </style>
-            
-                {% for key, game in games.items() %}
-                    <img src="{{game[3]}}" alt="game"> <br>
-                    <a href="{{game[2]}}" target="_blank">
-                        <h3>{{game[1]}}</h3>
-                    </a>
-                    <h4> platforms : {{game[4]}}</h4>
-                    <h4> genres : {{game[5]}}</h4>
-                
-                    추천 결과가 마음에 드시나요?
+                <div class="box">
+                    {% for key, game in games.items() %}
+                    <div class="games">
+                        <img src="{{game[3]}}" alt="game"> <br>
+                        <a href="{{game[2]}}" target="_blank">
+                            <h3>{{game[1]}}</h3>
+                        </a>
+                        <h4> platforms : {{game[4]}}</h4>
+                        <h4> genres : {{game[5]}}</h4>
+                    
+                        게임이 마음에 드시나요?
+    
+                        <button type="button" name="{{key}}" class="btn-like">👍</button>
+                        <input type="hidden" id="{{key}}" name="dislike" value="{{game[0]}}">
+                    </div>
+                    <br>
+                    <br>
+                    {% endfor %}
+                </div>
 
-                    <button type="button" name="{{key}}" class="btn-like">👍</button>
-                    <input type="hidden" id="{{key}}" name="dislike" value="{{game[0]}}">
-
-                    <br>
-                    <br>
-                    <br>
-                {% endfor %}
                 
                                     
                 <script src="https://code.jquery.com/jquery.min.js"></script>
@@ -62,13 +68,7 @@
                     }
                 })
                 </script> 
-        <br>
-        <br>
-        home button을 눌러주세요🥹
-        <br>
-        <br>
-              
-        <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" alt="start" width="110" height="40">    </div>
+            </div>
         </form>
     </body>
 </html>

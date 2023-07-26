@@ -5,6 +5,7 @@
         <title> GameP!ck </title>
         <script src="{{ url_for('static', path='/input.js')}}"></script>
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
+        <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
         <script>
             const add_textbox = () => {
                 const box = document.getElementById("box");
@@ -34,20 +35,20 @@
         </script>
     </head>
 
-    <body style="background-color:rgb(255, 245, 230)">
+    <body style="background-color:rgb(240, 240, 240)">
         <div class="container">
             <form action="http://{{ ip }}:{{ port }}/output" method="post" id="inputForm">
                 <fieldset>
                     <legend> <h2> 사용자 정보를 입력해주세요</h2> </legend>
                     <h3> 1. 연령대 </h3>
-                    <input type="radio" name="age" id="20+" value="20" onclick="fieldsetDisable()"> <label for="20+"> 성인 </label>
+                    <input type="radio" name="age" id="20+" value="20" onclick="fieldsetDisable()"> <label for="20+"> 성인 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
                     <input type="radio" name="age" id="underage" value="0" onclick="fieldsetActive()"> <label for="underage"> 미성년자 </label>
                     <fieldset id="young" disabled>
-                        <h3> 1-2. 세부 연령대</h3>   
-                        <input type="radio" name="young" id="10-" value="9"> 10세 미만
-                        <input type="radio" name="young" id="10" value="10"> 10-12
-                        <input type="radio" name="young" id="13" value="13"> 13-16
-                        <input type="radio" name="young" id="17" value="17"> 17세 이상
+                        <h3> 1-2. 세부 연령대 (미성년자의 경우) </h3>   
+                        <input type="radio" name="young" id="10-" value="9"> 10세 미만 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="radio" name="young" id="10" value="10"> 10-12 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="radio" name="young" id="13" value="13"> 13-16 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="radio" name="young" id="17" value="17"> 17세 이상 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
                     </fieldset>
                     
                     <h3> 2. 보유하고 있는 게임 기기 (모두 골라주세요) </h3>
@@ -59,16 +60,13 @@
                     <input type="checkbox" name="platform" value="Xbox One"> Xbox One <br>
                     <input type="checkbox" name="platform" value="Xbox Series X"> Xbox Series X<br>
                 </fieldset>
-    
-                <br>
-                <br>
                 <fieldset> 
                     <legend> <h2> 선호하는 게임 스타일을 입력해주세요 </h2> </legend>
                     <h3> 1. 플레이 인원 수 </h3>
-                    <input type="radio" name="players" value="1"> 1명
-                    <input type="radio" name="players" value="2"> 2명
-                    <input type="radio" name="players" value="4"> 4인 이하
-                    <input type="radio" name="players" value="5"> 5인 이상
+                    <input type="radio" name="players" value="1"> 1명 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="2"> 2명 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="4"> 4인 이하 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="5"> 5인 이상 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
                     <input type="radio" name="players" value="0"> 상관 없음
     
                     <h3> 2. 선호하는 장르 (모두 골라주세요) </h3>
@@ -98,8 +96,10 @@
                 </fieldset>
                 
                 <section>
-                    <h2> 만족스럽게 플레이 했던 게임을 입력해주세요 (최대10개) </h2>
-                    <p>(게임이름은 영어로 입력되어야 합니다. 위,아래 방향키, 엔터키로 입력해주세요)</p>
+                    <span id="satisfy">
+                        <h2> 만족스럽게 플레이한 게임을 입력해주세요 (최대10개) </h2>
+                        🚨 게임이름은 영어로 입력되어야 합니다🚨 <br><br>
+                    </span>
                     <div id="box">
                         <!--검색어 입력 폼-->
                         <input
@@ -122,16 +122,17 @@
                 <script src="{{ url_for('static', path='/search.js')}}"></script>
                 <br>
                 <br>
-                <br>
-                <br>
-    
-                <input type="image" src="{{ url_for('static', path='image/submit_button.png')}}" id="submit" alt="submit" width="110" height="40" disabled>
+                <span id="img"><input type="image" src="{{ url_for('static', path='image/submit_button.png')}}" id="submit" alt="submit" width="165" height="60" disabled></span>
             </form>
 
             <script src="{{ url_for('static', path='/next.js')}}"></script>
 
             <div id="loading">
-                <h1> 로딩 중입니다 </h1>
+                <br> <br>
+                <img src="{{ url_for('static', path='./image/spin.gif')}}" alt="loading" width="72px" height="72px">
+                <h5 style="color: rgb(226, 112, 60);">&nbsp;&nbsp; now loading...</h5>
+                <br>
+                <h2> 😊 게임 추천 결과를 생성중입니다 😊 </h2>
             </div>
             
             <script>
