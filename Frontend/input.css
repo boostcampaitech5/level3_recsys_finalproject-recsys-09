@@ -25,6 +25,7 @@ section {
 .container {
     margin: 0 auto;
     width: 500px;
+    border-radius: 15px;
     background-color: white;
 }
 
