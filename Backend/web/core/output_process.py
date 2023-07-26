@@ -26,34 +26,20 @@ def create_response(hb_model, gpt, user):
     
     gpt = search_games(gpt)
     
-    for id in gpt:
-        if len(game_id) == 6:
-            break
-        
-        if id in game_id:
-            continue
-        
-        game_id.append(id)
-        
-    for id in hb_model:
-        if len(game_id) == 10:
-            break
-        
-        if id in game_id:
-            continue
-        
-        game_id.append(id)
+    gpt_len, hb_len = len(gpt), len(hb_model)
     
-    if len(game_id) < 5:
+    if gpt_len + hb_len >= 8:
+        if gpt_len < 5:
+            game_id = gpt[:gpt_len] + hb_model[:8-gpt_len]
+        elif hb_len < 3:
+            game_id = hb_model[:hb_len] + gpt[:8-hb_len]
+        else:
+            game_id = gpt[:5] + hb_model[:3]
+    else:
+        game_id = gpt + hb_model
+        n_popular = 8-len(game_id)
         popular = get_response(ModelRequest, user, 'popular')
-        for id in popular:
-            if len(game_id) == 10:
-                break
-            
-            if id in game_id:
-                continue
-            
-            game_id.append(id)
+        game_id += popular[:n_popular]
             
     game_dic = {}
     
