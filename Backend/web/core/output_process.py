@@ -31,18 +31,22 @@ def create_response(hb_model, gpt, user):
         lst1, lst2 = lst2, lst1
     
     while len(game_id) < 8 and lst1:
-        game_id.append(lst1.pop(0))
+        while lst1 and (lst1[0] in game_id):
+            lst1.pop(0)
+        if lst1:
+            game_id.append(lst1.pop(0))
         if lst2:
             if lst1 and len(game_id) >= 7:
                 continue
             lst1, lst2 = lst2, lst1
 
-    print(game_id)
-    game_len = len(game_id)
-    if game_len < 8:
-        n_popular = 8-len(game_id)
+    if len(game_id) < 8:
         popular = get_response(ModelRequest, user, 'popular')
-        game_id += popular[:n_popular]
+        while len(game_id) < 8 and popular:
+            while popular and (popular[0] in game_id):
+                popular.pop(0)
+            if popular:
+                game_id.append(popular.pop(0))
             
     game_dic = {}
     
