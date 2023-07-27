@@ -1,18 +1,7 @@
-import os
-
-from loguru import logger
-
-from core.errors import PredictException, ModelLoadException
-from core.config import POSTGRE, API_KEY
-
 # model
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import openai
 # data
-import pandas as pd
 import numpy as np
-import random
 from services.filters import filter
 from services.preprocess import * 
 
@@ -35,18 +24,6 @@ class HybridModel():
         self.user_table = load_data_from_redis('cf_model')
     
     def preprocess(self):
-        # input preprocess
-        self.game_id = []
-        self.user_games_names = [x for x in self.user_games_names if x != '']
-        if not self.user_games_names:
-            return
-        
-        for i in self.user_games_names:
-            input_idx = self.game_table[self.game_table['name'] == i]
-            if not input_idx.empty:
-                self.game_id.append(input_idx['id'].values[0])
-            
- 
         # model_table preprocess
         # user_idx로 묶어서 id를 배열로 합치기
         self.user_table = self.user_table.groupby('user_idx')['id'].apply(list).reset_index()
@@ -56,10 +33,10 @@ class HybridModel():
         if not self.user_games_id:
             return []
         
-        self.cf_table['similarity'] = self.cf_table['id'].apply(lambda x: game_similarity(x, self.user_games_id))
+        self.user_table['similarity'] = self.user_table['id'].apply(lambda x: game_similarity(x, self.user_games_id))
 
-        similarity_df = self.cf_table[self.cf_table['similarity'] == max(self.cf_table['similarity'])]
-        similarity_df = select_similar_user(similarity_df)
+        similarity_df = self.user_table[self.user_table['similarity'] == max(self.user_table['similarity'])]
+        similarity_df = self.model_table[self.model_table['user'].isin(select_similar_user_idx(similarity_df))]
 
         df_extracted = self.game_table[self.game_table['id'].isin(list(similarity_df['item']))]
         df_extracted = df_extracted.set_index('id')
@@ -67,7 +44,7 @@ class HybridModel():
         df_extracted = df_extracted.reset_index()
 
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
-        return list(final_id)[:5]
+        return list(final_id)[:10]
     
 
 class Most_popular_filter():

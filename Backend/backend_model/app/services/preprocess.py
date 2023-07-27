@@ -1,6 +1,7 @@
 from core.errors import PredictException, ModelLoadException
 from core.config import POSTGRE, MODEL_IP, REDIS_PORT
 
+import random
 import pandas as pd
 from sqlalchemy import create_engine
 from direct_redis import DirectRedis
@@ -46,3 +47,9 @@ def select_similar_user(df):
     if len(df) > 3:
         df.loc[:, 'id'] = df['id'].apply(lambda x: x[:5])
     return df
+
+def select_similar_user_idx(df):
+    if len(df) <= 3:
+        return list(df['user_idx'])
+    else:
+        return random.sample(list(df['user_idx']), 3)
