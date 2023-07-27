@@ -131,7 +131,6 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 ---
 
 ## 4️⃣ Modeling
-
 ### 1) Flow Chart
 
 ![그림4](https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/926135c3-4c32-454d-a68b-a00bd9c27481)
@@ -144,18 +143,22 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 - 우리가 수집한 유저들의 게임로그 데이터의 sparsity는 99.6%로 매우 높았는데, sparse한 데이터와 cold start problem에 특히 강한 Ease 모델이 단일모델 기준 성능이 가장 좋았음
 - 결과적으로, Ease를 베이스라인모델로 정하고, 다양한 모델을 결합한 하이브리드 모델을 구상
    
-### 2) Model Train
+### 3) Model Train
 
 - 수집한 유저 게임로그 데이터를 8:2 비율로 train-test set으로 split
 - train set 으로는 모델을 학습시키고, test set에서는 무작위로 masking을 진행 한 뒤 이를 모델이 예측하는 방식으로 성능평가를 진행
 - 성능지표는 precision@5, recall@5를 사용
 
-### 3) Collaborate Filtering
+### 4) Collaborate Filtering
 - Ease 모델을 통해 사전 수집된 유저들의 추천 결과를 도출
 - 이후 새로운 유저가 들어오면 Collaborative Filtering을 통해 사용자들 간의 유사도를 계산하고, 새로운 유저와 유사한 이전 사용자들을 필터링
 
-### 4) Content Based Filtering
-- Collaborative Filtering 을 통해 만들어진 추천리스트를 Content-based Filtering을 사용하여 사용자가 선호할 만한 아이템을 필터링 
+### 5) Content Based Filtering
+- Collaborative Filtering 을 통해 만들어진 추천리스트를 Content-based Filtering을 사용하여 사용자가 선호할 만한 아이템을 필터링
+
+### 6) GPT-3.5-turbo-Model
+************<gpt프롬프트사진>*********************************
+- 대화형 인터페이스를 활용한 GPT 프롬포트를 통해 사용자의 입력에 따른 게임 추천 모델로서 활용
 
 ---
 
