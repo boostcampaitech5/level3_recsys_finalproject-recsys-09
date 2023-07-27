@@ -1,0 +1,106 @@
+/* 현재 선택된 검색어 */
+.autocomplete > div.active {
+  background: #ffffff;
+  color: #000;
+}
+
+.autocomplete > div {
+background: #ffffff;
+border: 1px solid rgb(240, 240, 240);
+padding: 0.2rem 0.6rem;
+margin-right: 15px;
+}
+
+section {
+  border-radius: 15px;
+  margin: 20px;
+  display: flex;
+  flex-direction: column; 
+  background-color:  rgb(240, 240, 240);
+  margin-top: 2rem;
+}
+
+.container {
+  margin: 0 auto;
+  width: 600px;
+  border-radius: 15px;
+  background-color: white;
+  font-family: 'NanumSquare';
+}
+
+fieldset {
+margin: 20px;
+border: 0 solid black;
+line-height: 2rem;
+padding: 0.2em 0.4em;
+vertical-align: middle;
+}
+
+#young {
+margin-top: 20px;
+margin-left: 0px;
+background-color: rgb(240, 240, 240);
+border-radius: 15px;
+}
+
+legend {
+color:rgb(255, 115, 50);
+border-radius: 15px;
+}
+
+[type="radio"] {
+  appearance: none;
+  border: max(2px, 0.1em) solid gray;
+  border-radius: 50%;
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: -4px;
+}
+
+[type="radio"]:checked {
+border: 0.4em solid rgb(255, 115, 50);
+}
+
+[type="radio"]:disabled {
+background-color: lightgray;
+box-shadow: none;
+opacity: 0.7;
+cursor: not-allowed;
+}
+
+[type="radio"]:disabled + span {
+opacity: 0.7;
+cursor: not-allowed;
+}
+
+[type="checkbox"] {
+appearance: none;
+border: max(2px, 0.1em) solid gray;
+border-radius: 20%;
+width: 1.25em;
+height: 1.25em;
+vertical-align: middle;
+}
+
+[type="checkbox"]:checked {
+border: 0.625em solid rgb(255, 115, 50);
+}
+
+#loading {
+height: 300px;
+text-align: center;
+font-family: 'NanumSquare';
+}
+
+#satisfy {
+margin-left: 15px;
+}
+
+#box {
+margin-left: 15px;
+margin-bottom: 15px;
+}
+
+#img {
+  margin-left: 217.5px;
+}

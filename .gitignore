@@ -1,0 +1,17 @@
+# 프로젝트 전체 폴더 중 해당 폴더명을 사용하는 폴더 포함 그 폴더의 하위 파일은 모두 무시
+data/
+__pycache__
+output/
+dataset/
+general_yaml
+context_yaml
+log/
+log_tensorboard/
+saved/
+
+# 모든 확장자 파일을 무시
+*.csv
+*.ipynb_checkpoints
+*.env
+Dockerfile
+*.json

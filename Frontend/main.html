@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lan="eng">
+    <head>
+        <meta charset="utf-8">
+        <title> GameP!ck </title>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
+        <link rel="stylesheet" href="{{ url_for('static', path='./main.css')}}">
+        <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+    </head>
+    <body style="background-color:rgb(240, 240, 240)">
+        <div class="container">
+            <br> <br>
+            <img src="{{ url_for('static', path='./image/logo.png')}}" alt="logo" width="340" height="270"> <br> <br>
+            <h2> <span style="color:rgb(226, 112, 60)"> P!CK </span> YOUR GAME </h2>
+            <h2> 🕹️🎮🎲🎰</h2>
+            <h4>플랫폼 통합 게임 추천 서비스 겜픽입니다.</h4> <br> <br>
+            <input type="image" src="{{ url_for('static', path='./image/start_button.png')}}" onclick="location.href='http://{{ ip }}:{{ port }}/input';" alt="start" width="165" height="60">
+        </div>
+    </body>
+</html>

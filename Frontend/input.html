@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title> GameP!ck </title>
+        <script src="{{ url_for('static', path='/input.js')}}"></script>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
+        <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+        <script>
+            const add_textbox = () => {
+                const box = document.getElementById("box");
+                const newP = document.createElement('p');
+
+                if (document.getElementsByName("search").length >=10) {
+                    alert("입력 가능한 게임 항목은 최대 10개입니다.");
+                    return;
+                }
+                newP.innerHTML = "<input type='text' name='search' placeholder='검색어를 입력해주세요.' autocomplete='off' onkeydown='return event.key !== `Enter`;'> <span class='autocomplete' name='autocomplete'></span> <input type='button' value='삭제' onclick='remove(this)'>";
+                const addButton = document.querySelector("#box input[type='button'][value='추가']");
+                box.insertBefore(newP, addButton);
+
+                $search.forEach(search => search.addEventListener('input', makeAutocomplete));
+            }
+
+            const remove = (obj) => {
+                document.getElementById('box').removeChild(obj.parentNode);
+            }
+        </script>
+        <link rel="stylesheet" href="{{ url_for('static', path='/input.css')}}">
+        <script>
+            window.onpageshow = function(){
+                form.style.display = "block"
+                loading.style.display = "none"
+            }
+        </script>
+    </head>
+
+    <body style="background-color:rgb(240, 240, 240)">
+        <div class="container">
+            <form action="http://{{ ip }}:{{ port }}/output" method="post" id="inputForm">
+                <fieldset>
+                    <legend> <h2> 사용자 정보를 입력해주세요</h2> </legend>
+                    <h3> 1. 연령대 </h3>
+                    <input type="radio" name="age" id="20+" value="20" onclick="fieldsetDisable()"> <label for="20+"> 성인 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
+                    <input type="radio" name="age" id="underage" value="0" onclick="fieldsetActive()"> <label for="underage"> 미성년자 </label>
+                    <fieldset id="young" disabled>
+                        <h3> 1-2. 세부 연령대 (미성년자의 경우) </h3>   
+                        <input type="radio" name="young" id="10-" value="9"> 10세 미만 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="radio" name="young" id="10" value="10"> 10-12 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="radio" name="young" id="13" value="13"> 13-16 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                        <input type="radio" name="young" id="17" value="17"> 17세 이상 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    </fieldset>
+                    
+                    <h3> 2. 보유하고 있는 게임 기기 (모두 골라주세요) </h3>
+                    <input type="checkbox" name="platform" value="PC"> PC <br>
+                    <input type="checkbox" name="platform" value="iOS"> iOS (iPhone/iPad) <br>
+                    <input type="checkbox" name="platform" value="Switch"> 닌텐도 스위치 <br>
+                    <input type="checkbox" name="platform" value="PlayStation 4"> Play Station 4 <br>
+                    <input type="checkbox" name="platform" value="PlayStation 5"> Play Station 5 <br>
+                    <input type="checkbox" name="platform" value="Xbox One"> Xbox One <br>
+                    <input type="checkbox" name="platform" value="Xbox Series X"> Xbox Series X<br>
+                </fieldset>
+                <fieldset> 
+                    <legend> <h2> 선호하는 게임 스타일을 입력해주세요 </h2> </legend>
+                    <h3> 1. 플레이 인원 수 </h3>
+                    <input type="radio" name="players" value="1"> 1명 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="2"> 2명 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="4"> 4인 이하 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="5"> 5인 이상 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    <input type="radio" name="players" value="0"> 상관 없음
+    
+                    <h3> 2. 선호하는 장르 (모두 골라주세요) </h3>
+                    <input type="checkbox" name="selectall" value="all" onclick="selectAll(this)"> 모두 선택 <br>
+                    <input type="checkbox" name="genre" value="RPG" onclick='checkSelectAll()'> RPG <br>
+                    <input type="checkbox" name="genre" value="Shooting" onclick='checkSelectAll()'> FPS / Shooting <br>
+                    <input type="checkbox" name="genre" value="AOS" onclick='checkSelectAll()'> AOS / MOBA <br>
+                    <input type="checkbox" name="genre" value="Action" onclick='checkSelectAll()'> 액션 <br>
+                    <input type="checkbox" name="genre" value="Tactics" onclick='checkSelectAll()'> 전략 <br>
+                    <input type="checkbox" name="genre" value="Puzzle" onclick='checkSelectAll()'> 퍼즐 <br>
+                    <input type="checkbox" name="genre" value="Simulation" onclick='checkSelectAll()'> 시뮬레이션 <br>
+                    <input type="checkbox" name="genre" value="Adventure" onclick='checkSelectAll()'> 어드벤처 <br>
+                    <input type="checkbox" name="genre" value="Sports" onclick='checkSelectAll()'> 스포츠 <br>
+                    <input type="checkbox" name="genre" value="Arcade" onclick='checkSelectAll()'> 아케이드 <br>
+                    <input type="checkbox" name="genre" value="Racing" onclick='checkSelectAll()'> 레이싱 <br>
+    
+                    <h3> 3. 선호하는 게임 태그 (모두 골라주세요) </h3>
+                    <input type="checkbox" class = "tag" name="tag" value="Graphics" onclick="dontCareDisable();"> 작화 / 디자인 <br>
+                    <input type="checkbox" class = "tag" name="tag" value="Sound" onclick="dontCareDisable();"> 음향 / 사운드 <br>
+                    <input type="checkbox" class = "tag" name="tag" value="Creativity" onclick="dontCareDisable();"> 독창성 <br>
+                    <input type="checkbox" class = "tag" name="tag" value="Freedom" onclick="dontCareDisable();"> 자유도 <br>
+                    <input type="checkbox" class = "tag" name="tag" value="Hitting" onclick="dontCareDisable();"> 타격감 <br>
+                    <input type="checkbox" class = "tag" name="tag" value="Completion" onclick="dontCareDisable();"> 완성도 <br>
+                    <input type="checkbox" class = "tag" name="tag" id="hard" value="hard" onclick="hardLevelSelect(); dontCareDisable();"> 높은 난이도 <br>
+                    <input type="checkbox" class = "tag" name="tag" id="easy" value="easy" onclick="easyLevelSelect(); dontCareDisable();"> 낮은 난이도 <br>
+                    <input type="checkbox" name="tag" id="none" value="all" onclick="dontCare()"> 상관없음 <br>
+                </fieldset>
+                
+                <section>
+                    <span id="satisfy">
+                        <h2> 만족스럽게 플레이한 게임을 입력해주세요 (최대10개) </h2>
+                        🚨 게임이름은 영어로 입력되어야 합니다🚨 <br><br>
+                    </span>
+                    <div id="box">
+                        <!--검색어 입력 폼-->
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="검색어를 입력해주세요."
+                            autocomplete="off"
+                            onkeydown="return event.key !== 'Enter';"
+                        />  
+                        <span class="autocomplete" name="autocomplete"></span>
+                        <br>
+                        <input type="button" value="추가" onclick="add_textbox()">
+                    </div>
+                </section>
+                
+                <script>
+                    const dataList = {{ game_list | tojson }}
+                </script>
+                
+                <script src="{{ url_for('static', path='/search.js')}}"></script>
+                <br>
+                <br>
+                <span id="img"><input type="image" src="{{ url_for('static', path='image/submit_button.png')}}" id="submit" alt="submit" width="165" height="60" disabled></span>
+            </form>
+
+            <script src="{{ url_for('static', path='/next.js')}}"></script>
+
+            <div id="loading">
+                <br> <br>
+                <img src="{{ url_for('static', path='./image/spin.gif')}}" alt="loading" width="72px" height="72px">
+                <h5 style="color: rgb(226, 112, 60);">&nbsp;&nbsp; now loading...</h5>
+                <br>
+                <h2> 😊 게임 추천 결과를 생성중입니다 😊 </h2>
+            </div>
+            
+            <script>
+                const form = document.getElementById("inputForm")
+                const loading = document.getElementById("loading")
+
+                form.onsubmit = function () {
+                    // 폼 제출 시 로딩 화면 보이도록 설정
+                    form.style.display = "none"
+                    loading.style.display = "block";
+
+                };
+            </script>
+
+
+            
+        </div>
+    </body>
+</html>

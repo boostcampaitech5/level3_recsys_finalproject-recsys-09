@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> GameP!ck </title>
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', path='./image/favicon.png')}}">
+        <link rel="stylesheet" href="{{ url_for('static', path='/output.css')}}">
+        <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+    </head>
+    <body style="background-color:rgb(240, 240, 240)">
+        <form method="post" action = "http://{{ ip }}:{{ port }}/home"  id="feedbackForm">
+            <div class="container">
+                <br><br>
+                <input type="image" src="{{ url_for('static', path='./image/home_button.png')}}" alt="start" width="165" height="60"> 
+                <br> 🏠 main 페이지로 돌아가기 🏠 <br><br> 
+                   
+                <style>
+                    .btn-like {
+                        color: transparent;
+                        text-shadow: 0 0 2px rgba(255,255,255,.7), 0 0 0 #000;
+                    }
+                    .btn-like:hover {
+                        text-shadow: 0 0 0 #ea0;
+                    }
+                    .btn-like.done {
+                        color: inherit;
+                        text-shadow: 0;
+                    }
+                    .btn-like.done:hover {
+                        color: transparent;
+                        text-shadow: 0 0 0 #777;
+                    }
+                </style>
+                <div class="box">
+                    {% for key, game in games.items() %}
+                    <div class="games">
+                        <br><br>
+                        <img src="{{game[3]}}" alt="game" class="gameimg"> <br>
+                        <a href="{{game[2]}}" target="_blank">
+                            <h3>{{game[1]}}</h3>
+                        </a>
+                        <h4> platforms : {{game[4]}}</h4>
+                        <h4> genres : {{game[5]}}</h4>
+                    
+                        게임이 마음에 드시나요?
+    
+                        <button type="button" name="{{key}}" class="btn-like">👍</button>
+                        <input type="hidden" id="{{key}}" name="dislike" value="{{game[0]}}">
+                        <br><br>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                
+                                    
+                <script src="https://code.jquery.com/jquery.min.js"></script>
+                <script>
+                $(".btn-like").click(function() {
+                    $(this).toggleClass("done");
+
+                    var id = $(this).attr("name");
+
+                    if ($("#" + id).attr("name") === "dislike") {
+                        $("#" + id).attr("name", "like");
+                    }
+                    else {
+                        $("#" + id).attr("name", "dislike");
+                    }
+                })
+                </script> 
+            </div>
+        </form>
+    </body>
+</html>
