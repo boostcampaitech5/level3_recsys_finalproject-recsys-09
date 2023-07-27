@@ -23,36 +23,19 @@
 📦level3_recsys_finalproject-recsys-09
 ├─ 📂.github
 │  ├─ 📂ISSUE_TEMPLATE
-│  │  ├─ 📜기능-수정.md
-│  │  ├─ 📜버그-발견.md
-│  │  └─ 📜새로운-기능-추가.md
-│  ├─ 📜PULL_REQUEST_TEMPLATE.md
 │  └─ 📂workflows
 │     ├─ 📜model_serving.yml
 │     └─ 📜web_serving.yml
 ├─ 📜.gitignore
 ├─ 📂Backend
 │  ├─ 📂backend_model
-│  │  ├─ 📜.dockerignore
-│  │  ├─ 📜.gitignore
-│  │  ├─ 📜.pylintrc
 │  │  ├─ 📂app
-│  │  │  ├─ 📂api
-│  │  │  │  ├─ 📂routes
-│  │  │  │  │  ├─ 📜api.py
-│  │  │  │  │  ├─ 📜model_hb.py
-│  │  │  │  │  ├─ 📜openapi.py
-│  │  │  │  │  ├─ 📜popular.py
-│  │  │  │  │  └─ 📜__init__.py
-│  │  │  │  └─ 📜__init__.py
+│  │  │  ├─ 📂api/routes
+│  │  │  │  ├─ 📜api.py
+│  │  │  │  ├─ 📜model_hb.py
+│  │  │  │  ├─ 📜openapi.py
+│  │  │  │  └─ 📜popular.py
 │  │  │  ├─ 📂core
-│  │  │  │  ├─ 📜config.py
-│  │  │  │  ├─ 📜errors.py
-│  │  │  │  ├─ 📜event.bak
-│  │  │  │  ├─ 📜events.py
-│  │  │  │  ├─ 📜logging.py
-│  │  │  │  ├─ 📜paginator.py
-│  │  │  │  └─ 📜__init__.py
 │  │  │  ├─ 📜main.py
 │  │  │  ├─ 📂models
 │  │  │  │  └─ 📜prediction.py
@@ -60,43 +43,25 @@
 │  │  │  │  ├─ 📜filters.py
 │  │  │  │  ├─ 📜predict.py
 │  │  │  │  └─ 📜preprocess.py
-│  │  │  ├─ 📜test_api.py
-│  │  │  └─ 📜__init__.py
-│  │  ├─ 📜docker-compose.yml
-│  │  ├─ 📜Makefile
-│  │  ├─ 📜poetry.lock
-│  │  ├─ 📜pyproject.toml
-│  │  └─ 📜README.md
+│  │  ├─ 📜Dockerfile
+│  │  └─ 📜Makefile
 │  └─ 📂web
-│     ├─ 📜.dockerignore
 │     ├─ 📂api
-│     │  ├─ 📜abtest_output.py
 │     │  ├─ 📜home.py
 │     │  ├─ 📜input.py
 │     │  └─ 📜output.py
-│     ├─ 📜app.py
 │     ├─ 📂core
-│     │  ├─ 📜config.py
-│     │  ├─ 📜input_process.py
-│     │  ├─ 📜output_process.py
-│     │  ├─ 📜preload.py
-│     │  └─ 📜save_db.py
 │     ├─ 📂database
-│     │  └─ 📜db.py
-│     ├─ 📜poetry.lock
-│     ├─ 📜pyproject.toml
-│     └─ 📂schemas
-│        ├─ 📜request.py
-│        └─ 📜response.py
+│     ├─ 📂schemas
+│     ├─ 📜app.py
+│     └─ 📜Dockerfile
 ├─ 📂Data
 │  ├─ 📂bigquery
 │  │  └─ 📜big_query.ipynb
 │  ├─ 📂crawling
 │  │  ├─ 📜game_data_crawling.ipynb
-│  │  ├─ 📜game_url_crawling.py
 │  │  ├─ 📜GPT_review.ipynb
 │  │  ├─ 📜MetaCriticScraper.py
-│  │  ├─ 📜review_sample_crawling.ipynb
 │  │  └─ 📜user_crawling.ipynb
 │  ├─ 📂postgre
 │  │  └─ 📜postgre.ipynb
@@ -104,26 +69,12 @@
 │     ├─ 📜#_of_player_mapping.ipynb
 │     ├─ 📜data_preprocess.ipynb
 │     ├─ 📜genre_mapping.ipynb
-│     ├─ 📜test_user_sampling.ipynb
-│     └─ 📜user_crawling_preprocess.ipynb
+│     └─ 📜test_user_sampling.ipynb
 ├─ 📂Frontend
 │  ├─ 📂image
-│  │  ├─ 📜favicon.png
-│  │  ├─ 📜home_button.png
-│  │  ├─ 📜logo.png
-│  │  ├─ 📜spin.gif
-│  │  ├─ 📜start_button.png
-│  │  ├─ 📜submit_button.png
-│  │  └─ 📜survey_button.png
-│  ├─ 📜input.css
 │  ├─ 📜input.html
-│  ├─ 📜input.js
-│  ├─ 📜main.css
 │  ├─ 📜main.html
-│  ├─ 📜next.js
-│  ├─ 📜output.css
-│  ├─ 📜output.html
-│  └─ 📜search.js
+│  └─ 📜output.html
 ├─ 📂Model
 │  ├─ 📜model.py
 │  ├─ 📜performance_check.py
@@ -141,6 +92,8 @@
 │     ├─ 📜filters.py
 │     └─ 📜precision_recall.py
 └─ 📜README.md
+
+
 ```
 
 ### 2) Service Overview
@@ -188,97 +141,144 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 
 ### 2) Model Train
 
-- 
+- 수집한 유저 게임로그 데이터를 8:2 비율로 train-test set으로 split
+- train set 으로는 모델을 학습시키고, test set에서는 무작위로 masking을 진행 한 뒤 이를 모델이 예측하는 방식으로 성능평가를 진행
+- 성능지표는 precision@5, recall@5를 사용
 
-### 2) Preprocessing
+### 3) Collaborate Filtering
+- Ease 모델을 통해 사전 수집된 유저들의 추천 결과를 도출
+- 이후 새로운 유저가 들어오면 Collaborative Filtering을 통해 사용자들 간의 유사도를 계산하고, 새로운 유저와 유사한 이전 사용자들을 필터링
 
-- 배경 제거 Segmentation을 위해 UNet 기반 rembg 적용
-- 3 x 224 x 224 image resizing
-- Data normalization
-
-### 3) Feature Extraction
-
-- ResNet34의 convolution part 적용
-- 3 x 224 x 224 크기의 image로부터 1 x 512 크기의 feature vector 추출
-
-### 4) Multi-Classification
-
-- 512-512-13 구조의 Multi layer perceptron 적용
-- Test dataset 기준 accuracy 78.12%
-
-### 5) Top-K Recommender
-
-- 저장된 feature data들과 cosine similarity를 계산하여 Top-K 이미지 선택
+### 4) Content Based Filtering
+- Collaborative Filtering 을 통해 만들어진 추천리스트를 Content-based Filtering을 사용하여 사용자가 선호할 만한 아이템을 필터링 
 
 ---
 
 ## 5️⃣Product Serving
 
-### 1) SW 구성
+### 1) Workflow
 
-![https://user-images.githubusercontent.com/91198452/172394318-980681d3-cb23-44db-af1b-63d94f8869fb.png](https://user-images.githubusercontent.com/91198452/172394318-980681d3-cb23-44db-af1b-63d94f8869fb.png)
+<img width="1098" alt="스크린샷 2023-07-27 오후 4 27 22" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/74ca95c0-22d6-426a-965e-153f865148a7">
 
-### 2) FrontEnd (Streamlit)
+### 2) FrontEnd
 
-- 사용자 인터페이스 제공 : 이미지 업로드, 크롭, 전시 등
-- 서비스 결과 전시 : 제품 유형, 유사 제품 이미지, 제품 링크, 가격 등
+- 사용자 데이터 입력 : 나이, 플랫폼, 선호 장르, 태그, 했던 게임 등
+- 게임 추천 결과 출력 : 게임 이름, 플랫폼, 메인 장르, url 등
 
 ### 3) BackEnd (FastAPI)
 
 - Model 과 FrontEnd 를 연결
-- Client로부터 데이터를 수신하여 Inference 모듈을 호출
-- Inference 모듈로부터 추론 결과를 수신하여 Client로 전송
+- FrontEnd로부터 데이터를 수신하여 Model Server에 Request
+- Model Server로 부터 Response data를 받아 FrontEnd 전송
 
-### 4) Docker
+### 4) github-action
 
-- FrontEnd와 BackEnd가 각각 독립된 Docker container 상에서 실행
-- Docker-compose를 이용해 즉시 실행 가능
+- github에 코드 push되면 Model과 Web 서버에 배포 자동화
+
+### 5) redis
+
+- Model 서버에서의 inference 시간 단축을 위하여 캐시 서버인 redis 서버 사용
+
+### 6) DB
+
+- 
 
 ---
 
 ## 6️⃣ **How to Run**
 
-You need install [Docker](https://www.docker.com/) first
-
-### run
+### run web(local)
 
 ```
-docker-compose build
-docker-compose up
+cd Backend/web/
+poetry shell
+poetry install
+python app.py
 ```
 
-### delete container
+### run model server(local)
 
 ```
-docker-compose down
+cd Backend/backend_model/
+poetry shell
+poetry install
+exit
+make run
 ```
 
-### without docker
+#### You need to make 4 server(Model, Web, DB, Redis)
 
-```
-cd Backend/
-python main.py
-
-cd ../Frontend
-streamlit run demo.py
-```
+#### You need to install [Docker](https://docs.docker.com/engine/install/) at model and Web server
 
 ## 7️⃣ **Demo (시연 영상)**
 
 - 시연영상
 
-![시연영상](https://user-images.githubusercontent.com/78737997/173265924-5563255e-480d-467b-a2df-5383cf8586ac.gif)
+
 
 ## 8️⃣ Reference
 
-- [https://www.kaggle.com/code/hamditarek/similar-image-cnn-cosine-similarity](https://www.kaggle.com/code/hamditarek/similar-image-cnn-cosine-similarity)
+- 자동완성: https://gurtn.tistory.com/212
+- Metacritic API: https://github.com/melroy89/metacritic_api
+- cookiecutter-fastapi-template: https://github.com/arthurhenrique/cookiecutter-fastapi
 
 ## 9️⃣ 팀원 소개
 
-| 이름 | GitHub | 역할 |
-| — | — | — |
-| 강영석 | [kysuk05](https://github.com/kysuk05)  | 프론트엔드(streamlit), GitHub, 백엔드 |
-| 김수희 | [Kimsuhhee](https://github.com/Kimsuhhee) | 데이터베이스, 크롤링, 전처리  |
-| 김예지 | [imyjk729](https://github.com/imyjk729) | 전처리, 특징추출, Top-K 추천 |
-| 이현우 | [harrier999](https://github.com/harrier999)  | 백엔드(FastAPI), Docker, 크롤링 |
-| 홍수연 | [sparklingade](https://github.com/sparklingade)  | PM, 전처리, 크롤링 |
+
+&nbsp;
+
+<table align="center">
+  <tr height="155px">
+    <td align="center" width="150px">
+      <a href="https://github.com/asdftyui"><img src=""/></a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/daream2"><img src=""/></a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/NongShiN"><img src=""/></a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/HeewonKwak"><img src=""/></a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/heeManLee"><img src=""/></a>
+    </td>
+  </tr>
+  <tr height="50px">
+    <td align="center" width="150px">
+      <a href="https://github.com/asdftyui">김현정_T5070</a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/daream2">민현지_T5078</a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/NongShiN">황찬웅_T5232</a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/HeewonKwak">곽희원_T5015</a>
+    </td>
+    <td align="center" width="150px">
+      <a href="https://github.com/heeManLee">이희만_T5169</a>
+    </td>
+  </tr>
+  </tr>
+  <tr height="80px">
+    <td align="center" width="150px">
+      <a>Model Server</a>
+    </td>
+    <td align="center" width="150px">
+      <a>Web Server</a>
+    </td>
+    <td align="center" width="150px">
+      <a>Front End / PM</a>
+    </td>
+    <td align="center" width="150px">
+      <a>Data Enginnering</a>
+    </td>
+    <td align="center" width="150px">
+      <a>Model Enginnering</a>
+    </td>
+  </tr>
+</table>
+&nbsp;
