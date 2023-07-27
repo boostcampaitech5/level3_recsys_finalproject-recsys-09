@@ -138,7 +138,12 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 
 ![그림5](https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/1081a0b3-5e93-4603-9fca-9caa0ff37cfa)
 
-
+### 2) Model Selection
+*********<모델 성능 그래프 사진>****************
+- 한정된 시간안에 여러가지 다양한 모델을 실험해보기 위해 Recbole 라이브러를 사용
+- 우리가 수집한 유저들의 게임로그 데이터의 sparsity는 99.6%로 매우 높았는데, sparse한 데이터와 cold start problem에 특히 강한 Ease 모델이 단일모델 기준 성능이 가장 좋았음
+- 결과적으로, Ease를 베이스라인모델로 정하고, 다양한 모델을 결합한 하이브리드 모델을 구상
+   
 ### 2) Model Train
 
 - 수집한 유저 게임로그 데이터를 8:2 비율로 train-test set으로 split
