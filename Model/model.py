@@ -167,7 +167,7 @@ class EASEModel():
         df_extracted = df_extracted.reset_index()
 
         final_id = filter(df_extracted, self.age, self.platform, self.players, self.major_genre, 'cf')
-        return list(final_id)
+        return list(final_id)[:5]
 
         
 class HybridModel():
@@ -235,46 +235,56 @@ class HybridModel():
         self.combined_ids = similarity_df['id'].explode().tolist()
         self.combined_ids = self.combined_ids + list(ease_predict['item'])
 
+        self.recommendations = self.combined_ids
+
     def cb_predict(self):
         # 사전에 입력받은 유저정보로 필터링
         idx = filter(self.game_table, self.age, self.platform, self.players, self.major_genre, 'cb')
         filtered_df = self.cb_table[self.cb_table['id'].isin(self.combined_ids)]
         filtered_df = filtered_df[filtered_df['id'].isin(idx)]
 
-        # 유사도 계산 시작 
-        self.final_df = pd.concat([filtered_df, self.df_user], ignore_index=True)
+        if len(filtered_df) <=5: 
+            self.recommendations = list(filtered_df['id'])
+        
+        else:
+            # 유사도 계산 시작 
+            self.final_df = pd.concat([self.df_user, filtered_df], ignore_index=True)
 
-        # 'id' 중복 제거, 중복이 있다면 뒤에 것을 남김
-        self.final_df = self.final_df.drop_duplicates(subset='id', keep='last')
+            # 'id' 중복 제거, 중복이 있다면 앞에 것을 남김
+            self.final_df = self.final_df.drop_duplicates(subset='id', keep='first')
 
-        # "genre" 열의 장르들을 숫자로 매핑
-        vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
-        genre_matrix = vectorizer.fit_transform(self.final_df['genre'])
-        genre_df = pd.DataFrame(genre_matrix.toarray())
+            # "genre" 열의 장르들을 숫자로 매핑
+            vectorizer = CountVectorizer(tokenizer=lambda x: x.split(', '))
+            genre_matrix = vectorizer.fit_transform(self.final_df['genre'])
+            genre_df = pd.DataFrame(genre_matrix.toarray())
 
-        # "id" 열 제외
-        df_numeric = self.final_df.drop(['id', 'genre'], axis=1)
+            # "id" 열 제외
+            df_numeric = self.final_df.drop(['id', 'genre'], axis=1)
 
-        # 숫자 데이터와 장르 데이터 결합
-        if self.tag == -1:
-            df_combined = genre_df
-        else: df_combined = pd.concat([df_numeric, genre_df], axis=1)
+            # 숫자 데이터와 장르 데이터 결합
+            if self.tag == -1:
+                df_combined = genre_df
+            else: df_combined = pd.concat([df_numeric, genre_df], axis=1)
 
-        # 코사인 유사도 계산
-        similarity_matrix = cosine_similarity(df_combined)
+            
+            
+            # 코사인 유사도 계산
+            similarity_matrix = cosine_similarity(df_combined)
 
-        # 유사도 행렬을 데이터프레임으로 변환
-        similarity_df = pd.DataFrame(similarity_matrix, index=self.final_df.index, columns=self.final_df.index)
+            # 유사도 행렬을 데이터프레임으로 변환
+            similarity_df = pd.DataFrame(similarity_matrix, index=self.final_df.index, columns=self.final_df.index)
+            
+            # 유저가 한 각 게임 별 유사한 항목 찾기
+            self.recommendations = []
+            for i in range(len(self.df_user)):
+                item_id = i
+                similar_items = similarity_df[item_id].nlargest(2)[len(self.df_user):]  # 상위 2개 유사한 항목 (자기 자신 제외)
+            
+                # 상위 2개 유사한 항목의 인덱스
+                similar_item_ids = similar_items.index.tolist()
 
-        # 상위 5개 유사한 항목 찾기
-        item_id = 0  # 기준 항목의 인덱스
-        similar_items = similarity_df[item_id].nlargest(len(self.df_user) + 5)[len(self.df_user):]  # 상위 5개 유사한 항목 (자기 자신 제외)
-
-        # 상위 5개 유사한 항목의 인덱스
-        similar_item_ids = similar_items.index.tolist()
-
-        # 추천 게임 목록 생성
-        self.recommendations = self.final_df.loc[similar_item_ids, 'id'].tolist()
+                # 추천 게임 목록 생성
+                self.recommendations.append(self.final_df.loc[similar_item_ids, 'id'].tolist())
 
     def predict(self):
         self.cf_predict()
