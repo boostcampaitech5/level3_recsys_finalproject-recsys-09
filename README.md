@@ -270,19 +270,19 @@ make run
   </tr>
   <tr height="80px">
     <td align="center" width="150px">
-      <a>Model Server</a>
-    </td>
-    <td align="center" width="150px">
       <a>Web Server</a>
     </td>
     <td align="center" width="150px">
       <a>Front End / PM</a>
     </td>
     <td align="center" width="150px">
-      <a>Data Enginnering</a>
+      <a>Model Enginnering</a>
     </td>
     <td align="center" width="150px">
-      <a>Model Enginnering</a>
+      <a>Model Server</a>
+    </td>
+    <td align="center" width="150px">
+      <a>Data Enginnering</a>
     </td>
   </tr>
 </table>
