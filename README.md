@@ -22,12 +22,6 @@
 
 ```
 📦level3_recsys_finalproject-recsys-09
-├─ 📂.github
-│  ├─ 📂ISSUE_TEMPLATE
-│  └─ 📂workflows
-│     ├─ 📜model_serving.yml
-│     └─ 📜web_serving.yml
-├─ 📜.gitignore
 ├─ 📂Backend
 │  ├─ 📂backend_model
 │  │  ├─ 📂app
@@ -87,6 +81,12 @@
 │  │  │  └─ 📜rebole_train.py
 │  │  └─ 📂utils
 │  └─ 📂src
+├─ 📂.github
+│  ├─ 📂ISSUE_TEMPLATE
+│  └─ 📂workflows
+│     ├─ 📜model_serving.yml
+│     └─ 📜web_serving.yml
+├─ 📜.gitignore
 └─ 📜README.md
 ```
 
