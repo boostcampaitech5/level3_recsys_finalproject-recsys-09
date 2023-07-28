@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop # 또는 배포하려는 브랜치
+      - main
     paths:
       - '.github/workflows/web_serving.yml'
       - 'Backend/web/**'
@@ -55,4 +56,4 @@ jobs:
               sudo docker stop $CONTAINER_NAME
               sudo docker rm $CONTAINER_NAME
               sudo docker rmi $(docker images -f "dangling=true" -q)
-              sudo docker run --env-file .env -d --name $CONTAINER_NAME -p 8080:8080 $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+              sudo docker run --env-file .env -d --name $CONTAINER_NAME -p 80:8080 $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
