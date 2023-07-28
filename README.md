@@ -234,19 +234,19 @@ make run
 <table align="center">
   <tr height="155px">
     <td align="center" width="150px">
-      <a href="https://github.com/asdftyui"><img src=""/></a>
+      <a href="https://github.com/asdftyui"><img src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/2ccc3807-3478-45b1-8ae7-07b8e42ff136"/></a>
     </td>
     <td align="center" width="150px">
-      <a href="https://github.com/daream2"><img src=""/></a>
+      <a href="https://github.com/daream2"><img src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/a292908e-033e-44a9-93a7-30b09a1a2825"/></a>
     </td>
     <td align="center" width="150px">
-      <a href="https://github.com/NongShiN"><img src=""/></a>
+      <a href="https://github.com/NongShiN"><img src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/6fe053e0-aad0-418a-a17d-b356c1c1a09a"/></a>
     </td>
     <td align="center" width="150px">
-      <a href="https://github.com/HeewonKwak"><img src=""/></a>
+      <a href="https://github.com/HeewonKwak"><img src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/6614f25b-b1d9-42ac-b23b-e8db74604404"/></a>
     </td>
     <td align="center" width="150px">
-      <a href="https://github.com/heeManLee"><img src=""/></a>
+      <a href="https://github.com/heeManLee"><img src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/12ed9faf-707f-4d05-a51e-c49f048cc7aa"/></a>
     </td>
   </tr>
   <tr height="50px">
