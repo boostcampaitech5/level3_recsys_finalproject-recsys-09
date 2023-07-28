@@ -1,11 +1,12 @@
-![KakaoTalk_Photo_2023-07-27-14-14-41](https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/ed5a89e3-a09c-4874-8e4c-a37f91dccd01)
+<p align="center"><img margin="Auto" width="1200" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/ed5a89e3-a09c-4874-8e4c-a37f91dccd01"></p>
+
 ## 1️⃣ Introduction
 
 ### 1) Background
 주변 친구들이나 유튜브, 인터넷 방송 등의 기존의 추천 방식으로는 개인 취향을 반영한 게임을 찾기 어렵습니다. 기존의 사용자 맞춤 게임 추천 서비스도 한 플랫폼 내에서만 정보를 이용하다 보니 관련도가 떨어지고, 플랫폼별 인기 게임의 특징과 장르 차이로 인해 추천 결과가 상이합니다. 이러한 문제를 해결하기 위해 겜픽이라는 다양한 게임 플랫폼을 아우르는 개인 맞춤 게임 추천 웹 서비스를 개발하게 되었습니다.
 
 ### 2) Project Objective
-<img margin="Auto" width="600" alt="스크린샷 2023-07-27 오후 1 30 52" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/a2bce2b7-22c8-4066-8774-d057f568d6a9">
+<p align="center"><img margin="Auto" width="600" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/a2bce2b7-22c8-4066-8774-d057f568d6a9"></p>
 
 - 다양한 게임 플랫폼을 통합하여 사용자 맞춤 게임 추천을 제공합니다. 사용자는 여러 플랫폼에 접속하지 않고도 한 곳에서 다양한 게임 추천을 받을 수 있어 효율적으로 게임을 찾을 수 있습니다.
 
@@ -97,8 +98,8 @@
 ```
 
 ### 2) Service Overview
-<img width="1067" alt="스크린샷 2023-07-27 오후 3 35 48" 
-src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/c2426a14-43b0-40d1-99ba-d536cf26dadd">
+<p align="center"><img margin="Auto" width="1067" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/c2426a14-43b0-40d1-99ba-d536cf26dadd"></p>
+
 
 1. 웹 서비스가 시작되면 웹 페이지에 시작 화면이 전시됩니다.
 2. 사용자는 서비스의 [START] 버튼을 클릭하면 사용자 정보 입력 페이지로 이동합니다.
@@ -119,8 +120,7 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 - 2차 : 1차배포의 피드백을 통한 부족한 게임들을 직접 DB에 추가
 
 ### 2) Database ERD
-<img width="800" alt="스크린샷 2023-07-27 오후 4 00 20" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/232416e2-2d38-4e53-a99f-4d6019f050eb">
-
+<p align="center"><img margin="Auto" width="800" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/232416e2-2d38-4e53-a99f-4d6019f050eb"></p>
 - 게임 이름을 id로 나타내는 column을 전체 테이블의 Primary Key로 설정
 - Game table에 앞서 메타 크리틱을 통해 수집한 게임들의 데이터를 저장
 - CB 모델 table에는 GPT 모델을 이용하여 구한 게임 태그 데이터가 포함되며 이는 content based model로 제품을 추천할 때 사용
@@ -134,13 +134,12 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 
 ## 4️⃣ Modeling
 ### 1) Flow Chart
-
-![그림4](https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/926135c3-4c32-454d-a68b-a00bd9c27481)
-
-![그림5](https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/1081a0b3-5e93-4603-9fca-9caa0ff37cfa)
+<p align="center"><img margin="Auto" width="900" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/926135c3-4c32-454d-a68b-a00bd9c27481"></p>
+<p align="center"><img margin="Auto" width="900" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/1081a0b3-5e93-4603-9fca-9caa0ff37cfa"></p>
 
 ### 2) Model Selection
-*********<모델 성능 그래프 사진>****************
+<p align="center"><img margin="Auto" width="700" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/9e238c36-7a90-4ff8-aad6-0187f3dd5685"></p>
+
 - 한정된 시간안에 여러가지 다양한 모델을 실험해보기 위해 Recbole 라이브러를 사용
 - 우리가 수집한 유저들의 게임로그 데이터의 sparsity는 99.6%로 매우 높았는데, sparse한 데이터와 cold start problem에 특히 강한 Ease 모델이 단일모델 기준 성능이 가장 좋았음
 - 결과적으로, Ease를 베이스라인모델로 정하고, 다양한 모델을 결합한 하이브리드 모델을 구상
@@ -159,7 +158,8 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 - Collaborative Filtering 을 통해 만들어진 추천리스트를 Content-based Filtering을 사용하여 사용자가 선호할 만한 아이템을 필터링
 
 ### 6) GPT-3.5-turbo-Model
-************<gpt프롬프트사진>*********************************
+<p align="center"><img margin="Auto" width="900" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/a5e1c3d0-a7c7-46ce-be5a-810a5c7753c9"></p>
+
 - 대화형 인터페이스를 활용한 GPT 프롬포트를 통해 사용자의 입력에 따른 게임 추천 모델로서 활용
 
 ---
@@ -167,8 +167,7 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 ## 5️⃣Product Serving
 
 ### 1) Workflow
-
-<img width="1098" alt="스크린샷 2023-07-27 오후 4 27 22" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/74ca95c0-22d6-426a-965e-153f865148a7">
+<p align="center"><img margin="Auto" width="900" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/74ca95c0-22d6-426a-965e-153f865148a7"></p>
 
 ### 2) FrontEnd
 
@@ -225,8 +224,7 @@ make run
 
 ## 7️⃣ **Demo (시연 영상)**
 
-- 시연영상
-
+<p align="center"><img src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/f487b00f-b20b-4d75-8e71-26776adb191d"></p>
 
 
 ## 8️⃣ Reference
