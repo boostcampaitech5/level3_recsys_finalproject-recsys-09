@@ -126,6 +126,8 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 - CB 모델 table에는 GPT 모델을 이용하여 구한 게임 태그 데이터가 포함되며 이는 content based model로 제품을 추천할 때 사용
 - 각 게임에 리뷰를 남긴 유저들의 리뷰 게임 목록을 수집하여 각 유저들과 게임 이름을 인덱스화 하여 각각 cf_model 테이블, user 테이블에 저장
 - 당장의 구현 과정에서는 사용하지 않지만 추후 서비스 고도화에 사용할 수 있는 정보들은 따로 details 테이블에 저장
+- 사용자 입력을 user_info에 입력에 대한 각 모델별 output을 gpt_output, hb_model_output에 사용자 피드백을 final_feedback에 저장
+- 위의 데이터는 예외 상황 파악 및 처리, 모델 학습 및 개선을 위한 데이터 수집을 위해 저장
 
 
 ---
@@ -175,21 +177,23 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 
 ### 3) BackEnd (FastAPI)
 
-- Model 과 FrontEnd 를 연결
-- FrontEnd로부터 데이터를 수신하여 Model Server에 Request
-- Model Server로 부터 Response data를 받아 FrontEnd 전송
+- 웹 서버와 모델 서버로 구성 
+- 웹 서버에서 Frontend로부터 사용자 정보를 수신하여 모델 서버에 Request 전송
+- 웹 서버에서 모델 서버로부터 Response를 받아 Frontend로 전송
 
 ### 4) github-action
 
-- github에 코드 push되면 Model과 Web 서버에 배포 자동화
+- github에 코드 push되면 모델과 웹 서버에 배포 자동화
 
 ### 5) redis
 
-- Model 서버에서의 inference 시간 단축을 위하여 캐시 서버인 redis 서버 사용
+- 모델 서버에서의 inference 시간 단축을 위하여 캐시 서버인 redis 서버 사용
 
 ### 6) DB
 
-- 
+- Frontend의 자동 완성 기능에 사용할 전체 게임 목록 생성
+- 모델 서버에서 받은 추천 게임 id 목록을 토대로 Frontend에 제공할 게임 정보 검색
+- Frontend로부터 받은 사용자 입력, 모델 서버로부터 받은 모델 출력과 Frontend로부터 받은 사용자 피드백을 저장
 
 ---
 
@@ -201,6 +205,7 @@ src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/as
 cd Backend/web/
 poetry shell
 poetry install
+pip install python-multipart
 python app.py
 ```
 
