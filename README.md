@@ -41,9 +41,9 @@
 │  │  │  ├─ 📂models
 │  │  │  │  └─ 📜prediction.py
 │  │  │  ├─ 📂services
-│  │  │  │  ├─ 📜filters.py
-│  │  │  │  ├─ 📜predict.py
-│  │  │  │  └─ 📜preprocess.py
+│  │  │     ├─ 📜filters.py
+│  │  │     ├─ 📜predict.py
+│  │  │     └─ 📜preprocess.py
 │  │  ├─ 📜Dockerfile
 │  │  └─ 📜Makefile
 │  └─ 📂web
@@ -57,8 +57,6 @@
 │     ├─ 📜app.py
 │     └─ 📜Dockerfile
 ├─ 📂Data
-│  ├─ 📂bigquery
-│  │  └─ 📜big_query.ipynb
 │  ├─ 📂crawling
 │  │  ├─ 📜game_data_crawling.ipynb
 │  │  ├─ 📜GPT_review.ipynb
@@ -88,13 +86,8 @@
 │  │  │  ├─ 📜rebole_inference.py
 │  │  │  └─ 📜rebole_train.py
 │  │  └─ 📂utils
-│  │     └─ 📜preprocess_data.py
 │  └─ 📂src
-│     ├─ 📜filters.py
-│     └─ 📜precision_recall.py
 └─ 📜README.md
-
-
 ```
 
 ### 2) Service Overview
