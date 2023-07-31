@@ -114,6 +114,7 @@
 
 ### 2) Database ERD
 <p align="center"><img margin="Auto" width="800" src="https://github.com/boostcampaitech5/level3_recsys_finalproject-recsys-09/assets/44831566/99057a5a-6a73-40a0-a7c1-c9efd97a265c"></p>
+
 - 게임 이름을 id로 나타내는 column을 전체 테이블의 Primary Key로 설정
 - Game table에 앞서 메타 크리틱을 통해 수집한 게임들의 데이터를 저장
 - CB 모델 table에는 GPT 모델을 이용하여 구한 게임 태그 데이터가 포함되며 이는 content based model로 제품을 추천할 때 사용
