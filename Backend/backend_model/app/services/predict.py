@@ -1,5 +1,6 @@
 # model
 import openai
+from core.config import API_KEY
 # data
 import numpy as np
 from services.filters import filter
